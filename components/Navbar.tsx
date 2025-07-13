@@ -73,6 +73,14 @@ export default function Navbar() {
               >
                 Contacto
               </Link>
+              {user && (
+                <Link
+                  href="/dashboard"
+                  className="text-blue-700 font-semibold hover:text-blue-900 px-3 py-2 text-sm transition-colors"
+                >
+                  Dashboard
+                </Link>
+              )}
             </div>
           </div>
 

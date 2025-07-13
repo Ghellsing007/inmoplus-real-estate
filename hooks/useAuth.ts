@@ -80,6 +80,12 @@ export function useAuth() {
     syncUserProfile()
   }, [user])
 
+  useEffect(() => {
+    if (user) {
+      fetchProfile(user.id);
+    }
+  }, [user]);
+
   const fetchProfile = async (userId: string) => {
     try {
       console.log('Fetching profile for user:', userId)
