@@ -48,6 +48,38 @@ export function useAuth() {
     return () => subscription.unsubscribe()
   }, [])
 
+  // Sincronización automática: crear usuario en la tabla users si no existe
+  useEffect(() => {
+    const syncUserProfile = async () => {
+      if (!user) return
+      // Buscar el perfil en la tabla users
+      const { data, error } = await supabase
+        .from('users')
+        .select('id')
+        .eq('id', user.id)
+        .single()
+      if (!data) {
+        // Crear el usuario en la tabla users
+        const { error: insertError } = await supabase
+          .from('users')
+          .insert([
+            {
+              id: user.id,
+              email: user.email,
+              full_name: user.user_metadata?.full_name || user.email,
+              phone: user.phone || null
+            }
+          ])
+        if (insertError) {
+          console.error('Error creando usuario sincronizado:', insertError)
+        } else {
+          console.log('Usuario sincronizado en tabla users')
+        }
+      }
+    }
+    syncUserProfile()
+  }, [user])
+
   const fetchProfile = async (userId: string) => {
     try {
       console.log('Fetching profile for user:', userId)

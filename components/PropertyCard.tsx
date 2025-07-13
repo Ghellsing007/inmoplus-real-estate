@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import { useState } from "react"
 
 import Image from "next/image"
 import Link from "next/link"
@@ -9,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Heart, MapPin, Bed, Bath, Square, Eye } from "lucide-react"
 import { useFavorites } from "@/hooks/useFavorites"
 import { useAuth } from "@/hooks/useAuth"
+import { useRouter } from "next/navigation"
 
 interface PropertyCardProps {
   property: {
@@ -40,6 +42,9 @@ interface PropertyCardProps {
 export default function PropertyCard({ property }: PropertyCardProps) {
   const { user } = useAuth()
   const { isFavorited, toggleFavorite } = useFavorites()
+  const [isLoadingFavorite, setIsLoadingFavorite] = useState(false)
+  const [localFavorite, setLocalFavorite] = useState<boolean | null>(null)
+  const router = useRouter()
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("es-ES", {
@@ -50,17 +55,23 @@ export default function PropertyCard({ property }: PropertyCardProps) {
     }).format(price)
   }
 
+  // Determinar si es favorito (optimista)
+  const favorited = localFavorite !== null ? localFavorite : isFavorited(property.id)
+
   const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     
     if (!user) {
-      // Aquí podrías mostrar un modal de autenticación
-      alert('Debes iniciar sesión para agregar favoritos')
+      router.push('/login')
       return
     }
     
+    setIsLoadingFavorite(true)
+    setLocalFavorite(!favorited) // Optimistic UI
     await toggleFavorite(property.id)
+    setIsLoadingFavorite(false)
+    setLocalFavorite(null) // Volver a depender del hook
   }
 
   // Determinar si es venta o alquiler basado en el status
@@ -93,11 +104,22 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           </div>
           <button
             onClick={handleFavoriteClick}
-            className="absolute top-4 right-4 p-2 bg-white/80 rounded-full hover:bg-white transition-colors"
+            className={`absolute top-4 right-4 p-2 bg-white/80 rounded-full hover:bg-white transition-colors flex items-center justify-center ${favorited ? "animate-[heartbeat_0.4s]" : ""}`}
+            disabled={isLoadingFavorite}
+            style={{ minWidth: 40, minHeight: 40 }}
+            aria-label={favorited ? "Quitar de favoritos" : "Agregar a favoritos"}
           >
-            <Heart
-              className={`h-5 w-5 ${isFavorited(property.id) ? "text-red-500 fill-current" : "text-gray-600 hover:text-red-500"}`}
-            />
+            {isLoadingFavorite ? (
+              <svg className="animate-spin h-5 w-5 text-blue-500" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+              </svg>
+            ) : (
+              <Heart
+                className={`h-5 w-5 transition-colors duration-200 ${favorited ? "text-red-500 fill-current" : "text-gray-600 hover:text-red-500"}`}
+                style={{ filter: favorited ? "drop-shadow(0 0 2px #f87171)" : undefined }}
+              />
+            )}
           </button>
         </div>
 

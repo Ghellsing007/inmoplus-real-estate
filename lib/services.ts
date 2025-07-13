@@ -535,12 +535,19 @@ export const favoriteService = {
 
   // Agregar a favoritos
   async addToFavorites(userId: string, propertyId: string): Promise<boolean> {
+    console.log('[addToFavorites] userId:', userId, 'propertyId:', propertyId)
     const { error } = await supabase
       .from('favorites')
       .insert([{ user_id: userId, property_id: propertyId }])
     
     if (error) {
       console.error('Error adding to favorites:', error)
+      console.error('Detalles del error:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      })
       return false
     }
     
