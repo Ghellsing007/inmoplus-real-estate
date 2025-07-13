@@ -1,22 +1,14 @@
-Lista de tareas ampliada (TODO):
-Filtros avanzados de búsqueda (precio, tipo, ciudad, habitaciones, etc.)
-Búsqueda por mapa, palabra clave y amenities
-Favoritos (guardar/quitar propiedades favoritas, visualización de favoritos)
-Agendar citas con agentes
-Mensajes de contacto a agentes
-Perfil de usuario (ver y editar datos, citas, favoritos)
-Historial de actividad del usuario
-Panel de agentes (propiedades asignadas, estadísticas, citas)
-Carga y gestión de imágenes para propiedades y perfiles
-Panel de administración (gestión global, solo admin)
-Responsive y experiencia móvil
-Mejoras visuales y UX
-Seguridad y validaciones
-Mejorar SEO (títulos, OpenGraph, sitemap, robots.txt)
-Notificaciones y emails (citas, mensajes, cambios de estado)
-Soporte para varios idiomas (i18n)
-Integración con Google Maps
-Blog o sección de noticias
-Testimonios y valoraciones
-Exportar datos a PDF/Excel
-Accesibilidad (a11y)
+¡Excelente! Para que la migración sea ordenada y exitosa, te sugiero este orden óptimo (pero dime si tienes otra prioridad):
+Autenticación y registro (si no está robusto en Inmoplus)
+Listado de propiedades con filtros (el corazón del marketplace)
+Detalle de propiedad (ficha individual)
+Sistema de reservas/citas (adaptar reservas de coches a agendar visitas o reservar propiedades)
+Panel de administración (gestión de propiedades, usuarios, reservas)
+Favoritos (guardar propiedades favoritas)
+Integración de pagos (si aplica en tu modelo de negocio)
+Componentes y utilidades compartidas (modales, formularios, hooks, etc.)
+¿Por cuál quieres empezar?
+Listado con filtros (para que los usuarios puedan buscar propiedades)
+Sistema de reservas/citas (para que puedan agendar visitas)
+Otra funcionalidad (indica cuál)
+¡Confírmame por cuál arrancamos y comenzamos la migración/adaptación paso a paso!

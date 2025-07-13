@@ -1,0 +1,16 @@
+export const dataBrands = [
+  { url: "ford.png" },
+  { url: "honda.png" },
+  { url: "jaguar.png" },
+  { url: "land-rover.png" },
+  { url: "lotus.png" },
+  { url: "mercedes-benz.png" },
+  { url: "nissan.png" },
+  { url: "peugeot.png" },
+  { url: "porsche.png" },
+  { url: "subaru.png" },
+  { url: "tesla.png" },
+  { url: "toyota.png" },
+  { url: "volkswagen.png" },
+  { url: "volvo.png" },
+];

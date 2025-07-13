@@ -15,10 +15,12 @@ import { useAuth } from "@/hooks/useAuth"
 interface ContactAgentFormProps {
   propertyId: string
   agentId: string
+  agentEmail: string
+  propertyTitle: string
   onClose: () => void
 }
 
-export default function ContactAgentForm({ propertyId, agentId, onClose }: ContactAgentFormProps) {
+export default function ContactAgentForm({ propertyId, agentId, agentEmail, propertyTitle, onClose }: ContactAgentFormProps) {
   const { profile } = useAuth()
   const [formData, setFormData] = useState({
     name: profile?.name || "",
@@ -61,6 +63,7 @@ export default function ContactAgentForm({ propertyId, agentId, onClose }: Conta
     if (!validateForm()) return
 
     setIsSubmitting(true)
+    setErrors({})
 
     try {
       const messageData = {
@@ -72,11 +75,27 @@ export default function ContactAgentForm({ propertyId, agentId, onClose }: Conta
         message: formData.message,
       }
 
+      // Guardar en la base de datos
       const result = await contactMessageService.createMessage(messageData)
+
+      // Enviar email al agente
+      // Aquí debes obtener el email y título de la propiedad (puedes pasarlos como props o consultarlos)
+      // Por simplicidad, aquí hago un fetch con datos de ejemplo:
+      await fetch('/api/contact-agent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          agentEmail,
+          clientName: formData.name,
+          clientEmail: formData.email,
+          clientPhone: formData.phone,
+          message: formData.message,
+          propertyTitle,
+        })
+      })
 
       if (result) {
         setSuccess(true)
-        // Cerrar modal después de 2 segundos
         setTimeout(() => {
           onClose()
           setSuccess(false)

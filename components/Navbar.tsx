@@ -82,19 +82,21 @@ export default function Navbar() {
               <div className="animate-pulse bg-gray-200 h-10 w-20 rounded"></div>
             ) : !user ? (
               <>
-                <Button 
-                  variant="outline" 
-                  className="border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
-                  onClick={handleAuthClick}
-                >
-                  Iniciar Sesión
-                </Button>
-                <Button 
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                  onClick={handleAuthClick}
-                >
-                  Registrarse
-                </Button>
+                <Link href="/sign-in">
+                  <Button 
+                    variant="outline" 
+                    className="border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
+                  >
+                    Iniciar Sesión
+                  </Button>
+                </Link>
+                <Link href="/sign-up">
+                  <Button 
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    Registrarse
+                  </Button>
+                </Link>
               </>
             ) : (
               <DropdownMenu>
@@ -189,19 +191,21 @@ export default function Navbar() {
                   <div className="animate-pulse bg-gray-200 h-10 w-20 rounded mb-2"></div>
                 ) : !user ? (
                   <div className="flex flex-col space-y-2">
-                    <Button 
-                      variant="outline" 
-                      className="border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
-                      onClick={handleAuthClick}
-                    >
-                      Iniciar Sesión
-                    </Button>
-                    <Button 
-                      className="bg-blue-600 hover:bg-blue-700 text-white"
-                      onClick={handleAuthClick}
-                    >
-                      Registrarse
-                    </Button>
+                    <Link href="/sign-in">
+                      <Button 
+                        variant="outline" 
+                        className="border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
+                      >
+                        Iniciar Sesión
+                      </Button>
+                    </Link>
+                    <Link href="/sign-up">
+                      <Button 
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        Registrarse
+                      </Button>
+                    </Link>
                   </div>
                 ) : (
                   <div className="space-y-2">

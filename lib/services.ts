@@ -278,6 +278,22 @@ export const propertyService = {
     }
     
     return true
+  },
+
+  // Obtener agente por ID
+  async getAgentById(id: string): Promise<Agent | null> {
+    const { data, error } = await supabase
+      .from('agents')
+      .select('*')
+      .eq('id', id)
+      .single()
+    
+    if (error) {
+      console.error('Error fetching agent:', error)
+      return null
+    }
+    
+    return data
   }
 }
 
