@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { propertyService } from "@/lib/services";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
+import { generateReactHelpers } from "@uploadthing/react";
+import type { OurFileRouter } from "@/app/api/uploadthing/route";
+
+const { useUploadThing } = generateReactHelpers<OurFileRouter>();
 
 export default function NewPropertyPage() {
   const router = useRouter();
@@ -29,73 +33,102 @@ export default function NewPropertyPage() {
     parking: false,
     features: "",
   });
-  const [images, setImages] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const { startUpload } = useUploadThing("inmuebleImage");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
+    setForm((prev: typeof form) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []).slice(0, 4);
-    setImages(files);
-    setImagePreviews(files.map((file) => URL.createObjectURL(file)));
-  };
-
-  const uploadImagesToSupabase = async (propertyId: string) => {
-    const urls: string[] = [];
-    for (let i = 0; i < images.length; i++) {
-      const file = images[i];
-      const ext = file.name.split('.').pop();
-      const filePath = `properties/${propertyId}/${i === 0 ? 'main' : 'img' + i}.${ext}`;
-      const { data, error } = await supabase.storage.from('properties').upload(filePath, file, { upsert: true });
-      if (error) throw new Error('Error subiendo imagen: ' + error.message);
-      const { data: urlData } = supabase.storage.from('properties').getPublicUrl(filePath);
-      urls.push(urlData.publicUrl);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setSelectedFiles(prev =>
+        [...prev, ...Array.from(e.target.files)].slice(0, 4)
+      );
     }
-    return urls;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
       if (!profile?.id) throw new Error("No se pudo identificar al agente.");
-      // 1. Crear la propiedad sin imágenes para obtener el ID
+      if (profile.role !== "admin" && profile.role !== "agent") {
+        throw new Error("Solo agentes o administradores pueden crear propiedades.");
+      }
+      // Subir imágenes solo al guardar
+      let urls: string[] = [];
+      if (selectedFiles.length > 0) {
+        const res = await startUpload(selectedFiles);
+        urls = (res ?? []).map((r: any) => r.url);
+        setImageUrls(urls);
+      }
+      // Verificar si el agente existe, si no, crearlo
+      const agentId = profile.id;
+      const agentEmail = profile.email;
+      const agentName = profile.display_name || profile.name || agentEmail;
+      const agentPhone = profile.phone || '';
+      const agentAvatar = profile.avatar || '';
+      const { data: existingAgent } = await supabase
+        .from('agents')
+        .select('id')
+        .eq('id', agentId)
+        .single();
+      if (!existingAgent) {
+        await supabase.from('agents').insert([{
+          id: agentId,
+          name: agentName,
+          email: agentEmail,
+          phone: agentPhone,
+          avatar_url: agentAvatar,
+          bio: '',
+          specialties: [],
+          experience_years: 0,
+          languages: [],
+          certifications: [],
+          rating: 0,
+          total_sales: 0,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }]);
+      }
       const propertyData = {
         title: form.title,
         description: form.description,
         price: Number(form.price),
-        type: form.type,
-        operation: form.operation,
+        location: form.city,
         address: form.address,
         city: form.city,
+        property_type: form.type,
+        operation: form.operation,
+        status: "disponible",
         bedrooms: Number(form.bedrooms),
         bathrooms: Number(form.bathrooms),
-        area: Number(form.area),
+        area_sq_meters: Number(form.area),
+        year_built: null,
+        features: form.features.split(",").map((f: string) => f.trim()).filter(Boolean),
+        amenities: [],
+        images: urls,
+        image: urls[0] || "",
+        agent_id: profile.id,
         furnished: form.furnished,
         parking: form.parking,
-        features: form.features.split(",").map((f) => f.trim()).filter(Boolean),
-        images: [],
-        agent_id: profile.id,
+        latitude: 0,
+        longitude: 0,
+        coordinates: null,
         created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       };
       const result = await propertyService.createProperty(propertyData);
       if (!result || !result.id) throw new Error("No se pudo guardar la propiedad.");
-      // 2. Subir imágenes a Supabase Storage
-      let imageUrls: string[] = [];
-      if (images.length > 0) {
-        imageUrls = await uploadImagesToSupabase(result.id);
-        // 3. Actualizar la propiedad con las URLs de las imágenes
-        await propertyService.updateProperty(result.id, { images: imageUrls });
-      }
       router.push("/dashboard/properties");
     } catch (err: any) {
       setError(err.message || "Error inesperado");
@@ -144,7 +177,7 @@ export default function NewPropertyPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block font-medium mb-1">Tipo</label>
-                  <Select name="type" value={form.type} onValueChange={(value) => setForm((prev) => ({ ...prev, type: value }))}>
+                  <Select name="type" value={form.type} onValueChange={(value: string) => setForm((prev) => ({ ...prev, type: value }))}>
                     <SelectTrigger>
                       <SelectValue placeholder="Tipo de propiedad" />
                     </SelectTrigger>
@@ -159,7 +192,7 @@ export default function NewPropertyPage() {
                 </div>
                 <div>
                   <label className="block font-medium mb-1">Operación</label>
-                  <Select name="operation" value={form.operation} onValueChange={(value) => setForm((prev) => ({ ...prev, operation: value }))}>
+                  <Select name="operation" value={form.operation} onValueChange={(value: string) => setForm((prev) => ({ ...prev, operation: value }))}>
                     <SelectTrigger>
                       <SelectValue placeholder="Operación" />
                     </SelectTrigger>
@@ -192,10 +225,26 @@ export default function NewPropertyPage() {
               </div>
               <div>
                 <label className="block font-medium mb-1">Imágenes (máx. 4)</label>
-                <Input type="file" accept="image/*" multiple onChange={handleImageChange} max={4} />
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg"
+                  multiple
+                  max={4}
+                  onChange={handleFileChange}
+                />
                 <div className="flex gap-2 mt-2">
-                  {imagePreviews.map((src, idx) => (
-                    <img key={idx} src={src} alt={`preview-${idx}`} className="w-20 h-20 object-cover rounded-lg border" />
+                  {selectedFiles.map((file, idx) => (
+                    <div key={idx} className="relative w-20 h-20">
+                      <img src={URL.createObjectURL(file)} alt={`preview-${idx}`} className="w-20 h-20 object-cover rounded-lg border" />
+                      <button
+                        type="button"
+                        onClick={() => setSelectedFiles(prev => prev.filter((_, i) => i !== idx))}
+                        className="absolute top-0 right-0 bg-black bg-opacity-60 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
+                        title="Eliminar imagen"
+                      >
+                        ×
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>

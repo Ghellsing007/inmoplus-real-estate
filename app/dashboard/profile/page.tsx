@@ -10,7 +10,7 @@ export default function ProfilePage() {
   const { profile, updateProfile, resetPassword } = useAuth();
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState({
-    name: profile?.name || "",
+    display_name: profile?.display_name || "",
     phone: profile?.phone || ""
   });
   const [loading, setLoading] = useState(false);
@@ -33,10 +33,10 @@ export default function ProfilePage() {
     setLoading(true);
     setSuccess("");
     setError("");
-    const { error } = await updateProfile({ name: form.name, phone: form.phone });
+    const { error } = await updateProfile({ display_name: form.display_name, phone: form.phone });
     setLoading(false);
     if (error) {
-      setError("Error al guardar los cambios");
+      setError(typeof error === 'object' && error !== null && 'message' in error ? (error as any).message : JSON.stringify(error) || "Error al guardar los cambios");
     } else {
       setSuccess("Perfil actualizado correctamente");
       setEditMode(false);
@@ -68,7 +68,7 @@ export default function ProfilePage() {
               <form onSubmit={handleSave} className="space-y-4">
                 <div>
                   <label className="font-semibold">Nombre:</label>
-                  <Input name="name" value={form.name} onChange={handleChange} required />
+                  <Input name="display_name" value={form.display_name} onChange={handleChange} required />
                 </div>
                 <div>
                   <label className="font-semibold">Teléfono:</label>
@@ -84,7 +84,7 @@ export default function ProfilePage() {
             ) : (
               <>
                 <div>
-                  <span className="font-semibold">Nombre:</span> {profile.name}
+                  <span className="font-semibold">Nombre:</span> {profile.display_name}
                 </div>
                 <div>
                   <span className="font-semibold">Email:</span> {profile.email}

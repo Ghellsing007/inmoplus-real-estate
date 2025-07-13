@@ -123,7 +123,7 @@ export default function ContactAgentForm({ propertyId, agentId, agentEmail, prop
       <Card className="w-full max-w-md">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Contactar Agente</CardTitle>
-          <Button variant="ghost" size="icon" onClick={onClose}>
+          <Button size="icon" onClick={onClose} className="bg-transparent">
             <X className="h-4 w-4" />
           </Button>
         </CardHeader>
@@ -192,9 +192,7 @@ export default function ContactAgentForm({ propertyId, agentId, agentEmail, prop
             <div className="flex space-x-3 pt-4">
               <Button
                 type="button"
-                variant="outline"
-                onClick={onClose}
-                className="flex-1 bg-transparent"
+                className="flex-1 bg-transparent border border-gray-300"
                 disabled={isSubmitting}
               >
                 Cancelar
