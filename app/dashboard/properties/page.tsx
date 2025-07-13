@@ -15,18 +15,26 @@ export default function PropertiesPage() {
   const router = useRouter();
 
   useEffect(() => {
+    let timeout: NodeJS.Timeout;
     const fetchProperties = async () => {
       setLoading(true);
       setError("");
+      timeout = setTimeout(() => {
+        setError("La carga está tardando más de lo normal. Por favor, espera o recarga la página.");
+      }, 7000); // 7 segundos
       const { data, error } = await supabase
         .from("properties")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .select("id,title,price,images,city,address,bedrooms,bathrooms,area_sq_meters")
+        .order("created_at", { ascending: false })
+        .limit(20);
+      console.log("PROPS:", data, error);
+      clearTimeout(timeout);
       if (error) setError(error.message);
       else setProperties(data || []);
       setLoading(false);
     };
     fetchProperties();
+    return () => clearTimeout(timeout);
   }, []);
 
   const handleEdit = (id: string) => {

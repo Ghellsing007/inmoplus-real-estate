@@ -75,7 +75,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
   }
 
   // Determinar si es venta o alquiler basado en el status
-  const isForRent = property.status.toLowerCase().includes('rent')
+  const isForRent = (property.status || "").toLowerCase().includes('rent')
   const operation = isForRent ? "alquiler" : "venta"
 
   // Usar la primera imagen del array o una imagen por defecto
@@ -86,13 +86,14 @@ export default function PropertyCard({ property }: PropertyCardProps) {
   return (
     <Link href={`/properties/${property.id}`}>
       <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer">
-        <div className="relative">
+        <div className="relative aspect-[16/10] w-full overflow-hidden bg-gray-100">
           <Image
             src={imageUrl}
             alt={property.title}
-            width={400}
-            height={250}
-            className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            style={{ objectFit: "cover" }}
+            className="transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, 400px"
           />
           <div className="absolute top-4 left-4 flex gap-2">
             <Badge className={`${operation === "venta" ? "bg-green-500" : "bg-blue-500"} text-white`}>
@@ -125,7 +126,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
         <div className="p-6">
           <div className="mb-3">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-2">{property.title}</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-2 min-h-[2.8em]">{property.title}</h3>
             <div className="flex items-center text-gray-600 mb-2">
               <MapPin className="h-4 w-4 mr-1" />
               <span className="text-sm">{property.location}</span>
