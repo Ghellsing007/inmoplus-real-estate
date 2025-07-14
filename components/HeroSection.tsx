@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, MapPin, Home, DollarSign } from "lucide-react"
 import { useSearchParams } from "next/navigation"
+import { supabase } from "@/lib/supabase"
 
 export default function HeroSection() {
   const router = useRouter()
@@ -17,6 +18,39 @@ export default function HeroSection() {
     priceRange: searchParams.get("priceRange") || "",
     operation: searchParams.get("operation") || "venta",
   })
+
+  // Estado para los tipos de propiedad dinámicos
+  const [propertyTypes, setPropertyTypes] = useState<{ value: string, label: string }[]>([])
+  useEffect(() => {
+    async function fetchPropertyTypes() {
+      const { data, error } = await supabase
+        .from('properties')
+        .select('property_type')
+        .neq('property_type', null)
+        .neq('property_type', '')
+        .order('property_type', { ascending: true })
+      if (!error && data) {
+        // Extraer únicos y formatear
+        const uniqueTypes = Array.from(new Set(data.map((d: any) => d.property_type)))
+        setPropertyTypes(uniqueTypes.map((type: string) => ({ value: type, label: type.charAt(0).toUpperCase() + type.slice(1) })))
+      }
+    }
+    fetchPropertyTypes()
+  }, [])
+
+  // Opciones válidas para los filtros
+  const operations = [
+    { value: "venta", label: "Venta" },
+    { value: "alquiler", label: "Alquiler" }
+  ];
+
+  const priceRanges = [
+    { value: "0-100000", label: "$0 - $100,000" },
+    { value: "100000-300000", label: "$100,000 - $300,000" },
+    { value: "300000-500000", label: "$300,000 - $500,000" },
+    { value: "500000-1000000", label: "$500,000 - $1,000,000" },
+    { value: "1000000+", label: "$1,000,000+" }
+  ];
 
   // Depuración: loguear cada vez que cambian los selects
   const logSelects = (field: string, value: string) => {
@@ -72,20 +106,16 @@ export default function HeroSection() {
         {/* Search Form */}
         <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 max-w-5xl mx-auto text-gray-900">
           <div className="flex flex-col lg:flex-row gap-4 mb-6">
-            <Button
-              variant={searchData.operation === "venta" ? "default" : "outline"}
-              onClick={() => setSearchData({ ...searchData, operation: "venta" })}
-              className={`flex-1 ${searchData.operation === "venta" ? "bg-blue-600 hover:bg-blue-700" : "text-blue-600 border-blue-600 hover:bg-blue-50"}`}
-            >
-              Comprar
-            </Button>
-            <Button
-              variant={searchData.operation === "alquiler" ? "default" : "outline"}
-              onClick={() => setSearchData({ ...searchData, operation: "alquiler" })}
-              className={`flex-1 ${searchData.operation === "alquiler" ? "bg-blue-600 hover:bg-blue-700" : "text-blue-600 border-blue-600 hover:bg-blue-50"}`}
-            >
-              Alquilar
-            </Button>
+            {operations.map((op) => (
+              <Button
+                key={op.value}
+                variant={searchData.operation === op.value ? "default" : "outline"}
+                onClick={() => setSearchData({ ...searchData, operation: op.value })}
+                className={`flex-1 ${searchData.operation === op.value ? "bg-blue-600 hover:bg-blue-700" : "text-blue-600 border-blue-600 hover:bg-blue-50"}`}
+              >
+                {op.label}
+              </Button>
+            ))}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -112,11 +142,9 @@ export default function HeroSection() {
                 <SelectValue placeholder="Tipo de propiedad" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="casa">Casa</SelectItem>
-                <SelectItem value="apartamento">Apartamento</SelectItem>
-                <SelectItem value="oficina">Oficina</SelectItem>
-                <SelectItem value="local">Local Comercial</SelectItem>
-                <SelectItem value="terreno">Terreno</SelectItem>
+                {propertyTypes.map((type) => (
+                  <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -132,11 +160,9 @@ export default function HeroSection() {
                 <SelectValue placeholder="Rango de precio" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="0-100000">$0 - $100,000</SelectItem>
-                <SelectItem value="100000-300000">$100,000 - $300,000</SelectItem>
-                <SelectItem value="300000-500000">$300,000 - $500,000</SelectItem>
-                <SelectItem value="500000-1000000">$500,000 - $1,000,000</SelectItem>
-                <SelectItem value="1000000+">$1,000,000+</SelectItem>
+                {priceRanges.map((range) => (
+                  <SelectItem key={range.value} value={range.value}>{range.label}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
 

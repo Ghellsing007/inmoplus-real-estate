@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { X } from "lucide-react"
+import { useEffect, useState } from "react"
+import { supabase } from "@/lib/supabase"
 
 interface FilterSidebarProps {
   filters: any
@@ -15,16 +17,24 @@ interface FilterSidebarProps {
 }
 
 export default function FilterSidebar({ filters, setFilters }: FilterSidebarProps) {
-  const propertyTypes = [
-    { id: "casa", label: "Casa" },
-    { id: "apartamento", label: "Apartamento" },
-    { id: "cabana", label: "Cabaña" },
-    { id: "chalet", label: "Chalet" },
-    { id: "cottage", label: "Cottage" },
-    { id: "oficina", label: "Oficina" },
-    { id: "local", label: "Local Comercial" },
-    { id: "terreno", label: "Terreno" },
-  ]
+  // Estado para los tipos de propiedad dinámicos
+  const [propertyTypes, setPropertyTypes] = useState<{ id: string, label: string }[]>([])
+  useEffect(() => {
+    async function fetchPropertyTypes() {
+      const { data, error } = await supabase
+        .from('properties')
+        .select('property_type')
+        .neq('property_type', null)
+        .neq('property_type', '')
+        .order('property_type', { ascending: true })
+      if (!error && data) {
+        // Extraer únicos y formatear
+        const uniqueTypes = Array.from(new Set(data.map((d: any) => d.property_type)))
+        setPropertyTypes(uniqueTypes.map((type: string) => ({ id: type, label: type.charAt(0).toUpperCase() + type.slice(1) })))
+      }
+    }
+    fetchPropertyTypes()
+  }, [])
 
   const features = [
     { id: "garage", label: "Garaje" },
@@ -105,7 +115,7 @@ export default function FilterSidebar({ filters, setFilters }: FilterSidebarProp
                     } else {
                       setFilters({
                         ...filters,
-                        propertyType: filters.propertyType.filter((t) => t !== type.id),
+                        propertyType: filters.propertyType.filter((t: string) => t !== type.id),
                       })
                     }
                   }}
