@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, Suspense } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,7 +10,7 @@ import { useSearchParams } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { Skeleton } from "@/components/ui/skeleton"
 
-export default function HeroSection() {
+function HeroSectionContent() {
   const router = useRouter()
   const searchParams = useSearchParams();
   const [searchData, setSearchData] = useState({
@@ -246,5 +246,13 @@ export default function HeroSection() {
         </div>
       </div>
     </section>
+  )
+}
+
+export default function HeroSection() {
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <HeroSectionContent />
+    </Suspense>
   )
 }

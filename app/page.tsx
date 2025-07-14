@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import Navbar from "@/components/Navbar"
 import HeroSection from "@/components/HeroSection"
 import PropertyCategories from "@/components/PropertyCategories"
@@ -18,13 +19,15 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Navbar/>
-      <HeroSection />
-      <PropertyGrid />
-      <AboutUsSection />
-      <Testimonials />
-      <FaqSection />
-      <Footer />
+      <Suspense fallback={<div>Cargando...</div>}>
+        <Navbar/>
+        <HeroSection />
+        <PropertyGrid />
+        <AboutUsSection />
+        <Testimonials />
+        <FaqSection />
+        <Footer />
+      </Suspense>
     </div>
   )
 }
