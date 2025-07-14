@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, MapPin, Home, DollarSign } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { supabase } from "@/lib/supabase"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function HeroSection() {
   const router = useRouter()
@@ -55,6 +56,48 @@ export default function HeroSection() {
   // Depuración: loguear cada vez que cambian los selects
   const logSelects = (field: string, value: string) => {
     console.log(`Cambio en ${field}:`, value)
+  }
+
+  // Autocompletado ubicación
+  const [localLocation, setLocalLocation] = useState(searchData.location)
+  const [locationLoading, setLocationLoading] = useState(false)
+  const [locationOptions, setLocationOptions] = useState<string[]>([])
+  const locationTimeout = useRef<NodeJS.Timeout | null>(null)
+
+  // Sincronizar local <-> global
+  useEffect(() => {
+    setLocalLocation(searchData.location)
+  }, [searchData.location])
+
+  // Handler para input de ubicación
+  const handleLocationInput = (value: string) => {
+    setLocalLocation(value)
+    setLocationLoading(true)
+    setLocationOptions([])
+    if (locationTimeout.current) clearTimeout(locationTimeout.current)
+    locationTimeout.current = setTimeout(async () => {
+      if (!value.trim()) {
+        setLocationOptions([])
+        setLocationLoading(false)
+        return
+      }
+      const { data, error } = await supabase
+        .from('properties')
+        .select('city')
+        .ilike('city', `%${value}%`)
+        .limit(5)
+      if (!error && data) {
+        const unique = Array.from(new Set(data.map((d: any) => d.city).filter(Boolean)))
+        setLocationOptions(unique)
+      } else {
+        setLocationOptions([])
+      }
+      setLocationLoading(false)
+    }, 400)
+  }
+  const commitLocation = (value?: string) => {
+    setSearchData(sd => ({ ...sd, location: value !== undefined ? value : localLocation }))
+    setLocationOptions([])
   }
 
   const handleSearch = () => {
@@ -122,12 +165,32 @@ export default function HeroSection() {
             <div className="relative">
               <MapPin className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
               <Input
-                placeholder="Ciudad o ubicación"
-                value={searchData.location}
-                onChange={(e) => setSearchData({ ...searchData, location: e.target.value })}
-                onKeyPress={handleKeyPress}
+                placeholder="Ciudad, barrio o zona"
+                value={localLocation}
+                onChange={e => handleLocationInput(e.target.value)}
+                onBlur={() => commitLocation()}
+                onKeyDown={e => e.key === 'Enter' && commitLocation()}
+                autoComplete="off"
                 className="pl-10 h-12 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
               />
+              {locationLoading && (
+                <div className="absolute left-0 top-full mt-1 w-full bg-white border rounded shadow z-10 p-2 text-sm text-gray-500">
+                  <Skeleton className="h-4 w-1/2 mb-1" /> Cargando...
+                </div>
+              )}
+              {!locationLoading && locationOptions.length > 0 && (
+                <div className="absolute left-0 top-full mt-1 w-full bg-white border rounded shadow z-10">
+                  {locationOptions.map((opt, i) => (
+                    <div
+                      key={i}
+                      className="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+                      onMouseDown={() => commitLocation(opt)}
+                    >
+                      {opt}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <Select
