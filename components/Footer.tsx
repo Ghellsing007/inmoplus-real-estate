@@ -133,6 +133,28 @@ export default function Footer() {
               </div>
             </div>
           </div>
+
+          {/* Legal */}
+          <div>
+            <h3 className="text-lg font-semibold mb-6">Legal</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/privacy-policy" className="text-gray-300 hover:text-blue-400 transition-colors">
+                  Política de Privacidad
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="text-gray-300 hover:text-blue-400 transition-colors">
+                  Términos de Uso
+                </Link>
+              </li>
+              <li>
+                <Link href="/cookies" className="text-gray-300 hover:text-blue-400 transition-colors">
+                  Cookies
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
 
         {/* Bottom Bar */}

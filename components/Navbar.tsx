@@ -62,6 +62,18 @@ export default function Navbar() {
                 Agentes
               </Link>
               <Link
+                href="/blog"
+                className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+              >
+                Blog
+              </Link>
+              <Link
+                href="/services"
+                className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+              >
+                Servicios
+              </Link>
+              <Link
                 href="/about"
                 className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
               >
@@ -73,14 +85,6 @@ export default function Navbar() {
               >
                 Contacto
               </Link>
-              {user && (
-                <Link
-                  href="/dashboard"
-                  className="text-blue-700 font-semibold hover:text-blue-900 px-3 py-2 text-sm transition-colors"
-                >
-                  Dashboard
-                </Link>
-              )}
             </div>
           </div>
 
@@ -128,9 +132,9 @@ export default function Navbar() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuItem asChild>
-                    <Link href="/profile" className="flex items-center">
-                      <User className="h-4 w-4 mr-2" />
-                      Mi Perfil
+                    <Link href="/dashboard" className="flex items-center">
+                      <Settings className="h-4 w-4 mr-2" />
+                      Dashboard
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
@@ -147,12 +151,6 @@ export default function Navbar() {
                       </Link>
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem asChild>
-                    <Link href="/settings" className="flex items-center">
-                      <Settings className="h-4 w-4 mr-2" />
-                      Configuración
-                    </Link>
-                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout} className="text-red-600">
                     <LogOut className="h-4 w-4 mr-2" />

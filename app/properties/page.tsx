@@ -1,14 +1,27 @@
+"use client"
+
+import { useSearchParams } from "next/navigation"
 import Navbar from "@/components/Navbar"
 import PropertyGrid from "@/components/PropertyGrid"
 import Footer from "@/components/Footer"
 
-export const metadata = {
-  title: "Propiedades - InmoPlus",
-  description:
-    "Explora nuestra amplia selección de propiedades en venta y alquiler. Encuentra tu hogar ideal con InmoPlus.",
-}
-
 export default function PropertiesPage() {
+  const searchParams = useSearchParams()
+  
+  // Extraer parámetros de búsqueda del HeroSection
+  const initialFilters = {
+    location: searchParams.get("location") || "",
+    propertyType: searchParams.get("propertyType") ? [searchParams.get("propertyType")!] : [],
+    priceRange: searchParams.get("priceRange") ? parsePriceRange(searchParams.get("priceRange")!) : [0, 1000000],
+    operation: searchParams.get("operation") || "all",
+  }
+
+  function parsePriceRange(priceRange: string): [number, number] {
+    if (priceRange === "1000000+") return [1000000, 10000000]
+    const [min, max] = priceRange.split("-").map(Number)
+    return [min, max]
+  }
+
   return (
     <div className="min-h-screen bg-slate-50">
       <Navbar />
@@ -21,7 +34,7 @@ export default function PropertiesPage() {
             </p>
           </div>
         </div>
-        <PropertyGrid />
+        <PropertyGrid initialFilters={initialFilters} />
       </div>
       <Footer />
     </div>

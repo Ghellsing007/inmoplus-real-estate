@@ -32,19 +32,28 @@ interface Property {
   updated_at: string
 }
 
-export default function PropertyGrid() {
+interface PropertyGridProps {
+  initialFilters?: {
+    location?: string
+    propertyType?: string[]
+    priceRange?: [number, number]
+    operation?: string
+  }
+}
+
+export default function PropertyGrid({ initialFilters }: PropertyGridProps) {
   const [properties, setProperties] = useState<Property[]>([])
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [showFilters, setShowFilters] = useState(false)
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState({
-    operation: "all",
-    propertyType: [],
-    priceRange: [0, 1000000],
+    operation: initialFilters?.operation || "all",
+    propertyType: initialFilters?.propertyType || [],
+    priceRange: initialFilters?.priceRange || [0, 1000000],
     bedrooms: "any",
     bathrooms: "any",
     area: [0, 500],
-    location: "",
+    location: initialFilters?.location || "",
     features: [],
   })
 

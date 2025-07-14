@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Users, Award, Home, Clock } from "lucide-react"
+import Link from "next/link"
 
 export default function AboutUsSection() {
   const stats = [
@@ -50,13 +51,17 @@ export default function AboutUsSection() {
               para brindar soluciones inmobiliarias integrales que superan las expectativas de nuestros clientes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">Conoce Nuestro Equipo</Button>
-              <Button
-                variant="outline"
-                className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-3 bg-transparent"
-              >
-                Nuestra Historia
-              </Button>
+              <Link href="/agents">
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">Conoce Nuestro Equipo</Button>
+              </Link>
+              <Link href="/about">
+                <Button
+                  variant="outline"
+                  className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-3 bg-transparent"
+                >
+                  Nuestra Historia
+                </Button>
+              </Link>
             </div>
           </div>
 

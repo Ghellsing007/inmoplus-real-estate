@@ -1,18 +1,40 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, MapPin, Home, DollarSign } from "lucide-react"
 
 export default function HeroSection() {
+  const router = useRouter()
   const [searchData, setSearchData] = useState({
     location: "",
     propertyType: "",
     priceRange: "",
     operation: "venta",
   })
+
+  const handleSearch = () => {
+    // Construir URL con parámetros de búsqueda
+    const params = new URLSearchParams()
+    
+    if (searchData.location) params.append("location", searchData.location)
+    if (searchData.propertyType) params.append("propertyType", searchData.propertyType)
+    if (searchData.priceRange) params.append("priceRange", searchData.priceRange)
+    if (searchData.operation) params.append("operation", searchData.operation)
+    
+    // Redirigir a la página de propiedades con filtros
+    const searchUrl = `/properties?${params.toString()}`
+    router.push(searchUrl)
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  }
 
   return (
     <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white overflow-hidden">
@@ -61,6 +83,7 @@ export default function HeroSection() {
                 placeholder="Ciudad o ubicación"
                 value={searchData.location}
                 onChange={(e) => setSearchData({ ...searchData, location: e.target.value })}
+                onKeyPress={handleKeyPress}
                 className="pl-10 h-12 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
@@ -99,7 +122,10 @@ export default function HeroSection() {
               </SelectContent>
             </Select>
 
-            <Button className="h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold">
+            <Button 
+              className="h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+              onClick={handleSearch}
+            >
               <Search className="h-5 w-5 mr-2" />
               Buscar
             </Button>

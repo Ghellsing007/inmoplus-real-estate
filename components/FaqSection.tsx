@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChevronDown, ChevronUp } from "lucide-react"
+import Link from "next/link"
 
 interface FAQ {
   id: string
@@ -105,12 +106,11 @@ export default function FaqSection() {
         <div className="text-center mt-12">
           <p className="text-gray-600 mb-6">¿No encontraste la respuesta que buscabas?</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors">
-              Contactar Soporte
-            </button>
-            <button className="border border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-3 rounded-lg font-medium transition-colors">
-              Chat en Vivo
-            </button>
+            <Link href="/contact">
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors">
+                Contactar
+              </button>
+            </Link>
           </div>
         </div>
       </div>

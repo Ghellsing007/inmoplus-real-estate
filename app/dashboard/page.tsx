@@ -4,6 +4,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Building2, Users, Heart, User } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
 
 export default function DashboardHome() {
   const { profile } = useAuth();
@@ -12,30 +19,73 @@ export default function DashboardHome() {
     return <div className="min-h-screen flex items-center justify-center">Cargando...</div>;
   }
 
+  // Accesos directos admin (puedes agregar más objetos a este array y el carrusel los mostrará automáticamente)
+  const adminCards = [
+    {
+      title: "Gestión de Usuarios",
+      icon: <Users className="h-5 w-5" />,
+      desc: "Administra los usuarios de la plataforma, cambia roles y gestiona permisos.",
+      href: "/dashboard/users",
+      link: "Ir a Usuarios",
+    },
+    {
+      title: "Gestión de Propiedades",
+      icon: <Building2 className="h-5 w-5" />,
+      desc: "Crea, edita y elimina propiedades de todos los agentes.",
+      href: "/dashboard/properties",
+      link: "Ir a Propiedades",
+    },
+    {
+      title: "Gestión de Agentes",
+      icon: <Users className="h-5 w-5" />,
+      desc: "Crea, edita y elimina agentes inmobiliarios de la plataforma.",
+      href: "/dashboard/agents",
+      link: "Ir a Agentes",
+    },
+    {
+      title: "Gestión de FAQs",
+      icon: <Building2 className="h-5 w-5" />,
+      desc: "Administra las preguntas frecuentes que se muestran a los usuarios en la web.",
+      href: "/dashboard/faqs",
+      link: "Ir a FAQs",
+    },
+    // Agrega aquí más accesos directos según se necesiten
+  ];
+
+  // Agrupar los accesos en slides de 4
+  function chunkArray<T>(arr: T[], size: number): T[][] {
+    const res = [];
+    for (let i = 0; i < arr.length; i += size) {
+      res.push(arr.slice(i, i + size));
+    }
+    return res;
+  }
+  const adminSlides = chunkArray(adminCards, 4);
+
   return (
-    <div className="max-w-5xl mx-auto py-8 px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
-      {/* Admin: ver todo */}
+    <div className="max-w-5xl mx-auto py-8 px-4">
       {profile.role === "admin" && (
-        <>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Users className="h-5 w-5" /> Gestión de Usuarios</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4">Administra los usuarios de la plataforma, cambia roles y gestiona permisos.</p>
-              <Link href="/dashboard/users" className="text-blue-600 hover:underline font-semibold">Ir a Usuarios</Link>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Building2 className="h-5 w-5" /> Gestión de Propiedades</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4">Crea, edita y elimina propiedades de todos los agentes.</p>
-              <Link href="/dashboard/properties" className="text-blue-600 hover:underline font-semibold">Ir a Propiedades</Link>
-            </CardContent>
-          </Card>
-        </>
+        <Carousel className="mb-8" opts={{ slidesToScroll: 1 }}>
+          <CarouselContent>
+            {adminSlides.map((slide, idx) => (
+              <CarouselItem key={idx} className="flex gap-6">
+                {slide.map((card) => (
+                  <Card key={card.href} className="flex-1 min-w-0">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">{card.icon} {card.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="mb-4">{card.desc}</p>
+                      <Link href={card.href} className="text-blue-600 hover:underline font-semibold">{card.link}</Link>
+                    </CardContent>
+                  </Card>
+                ))}
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
       )}
       {/* Agente: solo propiedades */}
       {profile.role === "agent" && (

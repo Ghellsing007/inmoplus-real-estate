@@ -66,6 +66,31 @@
   overflow: hidden;
 }
 
+/* Input styles to ensure visibility */
+input, textarea, select {
+  background-color: white !important;
+  color: #374151 !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* HeroSection specific input styles */
+.bg-white input,
+.bg-white textarea,
+.bg-white select {
+  background-color: white !important;
+  border-color: #d1d5db !important;
+}
+
+.bg-white input:focus,
+.bg-white textarea:focus,
+.bg-white select:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
 /* Smooth animations */
 .transition-all {
   transition-property: all;

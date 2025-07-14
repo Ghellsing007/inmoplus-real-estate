@@ -24,7 +24,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const links = [
     { href: "/dashboard/profile", label: "Mi Perfil", roles: ["admin", "agent", "client"] },
     { href: "/dashboard/properties", label: "Propiedades", roles: ["admin", "agent"] },
+    { href: "/dashboard/agents", label: "Agentes", roles: ["admin"] },
     { href: "/dashboard/users", label: "Usuarios", roles: ["admin"] },
+    { href: "/dashboard/faqs", label: "FAQs", roles: ["admin"] },
     { href: "/dashboard/favorites", label: "Favoritos", roles: ["client"] },
   ];
 

@@ -93,6 +93,16 @@ CREATE TABLE IF NOT EXISTS favorites (
     UNIQUE(user_id, property_id)
 );
 
+-- Tabla de preguntas frecuentes (FAQs)
+CREATE TABLE IF NOT EXISTS faqs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    question TEXT NOT NULL,
+    answer TEXT NOT NULL,
+    order_index INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Índices para mejorar el rendimiento
 CREATE INDEX IF NOT EXISTS idx_properties_agent_id ON properties(agent_id);
 CREATE INDEX IF NOT EXISTS idx_properties_city ON properties(city);
@@ -209,6 +219,14 @@ CREATE POLICY "Agents can view messages for their properties" ON contact_message
 -- Políticas para favoritos
 CREATE POLICY "Users can manage their own favorites" ON favorites
     FOR ALL USING (auth.uid() = user_id);
+
+-- Políticas de seguridad RLS para FAQs
+ALTER TABLE faqs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public can view faqs" ON faqs FOR SELECT USING (true);
+CREATE POLICY "Admins can manage faqs" ON faqs FOR ALL USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin'));
+
+-- Trigger para updated_at en faqs
+CREATE TRIGGER update_faqs_updated_at BEFORE UPDATE ON faqs FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Datos de ejemplo para agentes
 INSERT INTO agents (id, name, email, phone, specialization, rating, reviews, properties_count) VALUES
