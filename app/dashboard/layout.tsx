@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { User, Home, Users, Heart, Menu, ChevronLeft, ChevronRight, Building2,Start} from "lucide-react";
+import { User, Home, Users, Heart, Menu, ChevronLeft, ChevronRight, Building2} from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 

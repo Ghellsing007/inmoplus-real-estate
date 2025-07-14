@@ -16,6 +16,8 @@ export default function PropertiesPage() {
     operation: searchParams.get("operation") || "all",
   }
 
+  console.log("Filtros desde la URL:", initialFilters)
+
   function parsePriceRange(priceRange: string): [number, number] {
     if (priceRange === "1000000+") return [1000000, 10000000]
     const [min, max] = priceRange.split("-").map(Number)

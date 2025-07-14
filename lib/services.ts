@@ -124,7 +124,7 @@ export const propertyService = {
     parking?: boolean
   }): Promise<Property[]> {
     try {
-      console.log('Filtros recibidos:', filters)
+      console.log('Filtros recibidos en el servicio:', filters)
       
       let query = supabase.from('properties').select('*')
       

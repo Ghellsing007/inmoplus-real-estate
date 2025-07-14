@@ -78,7 +78,8 @@ export default function PropertyGrid({ initialFilters }: PropertyGridProps) {
           mappedFilters.maxArea = filters.area[1]
         }
         
-        console.log('Filtros mapeados:', mappedFilters)
+        console.log('Estado de filters en PropertyGrid:', filters)
+        console.log('mappedFilters enviados al servicio:', mappedFilters)
         const propertiesData = await propertyService.getPropertiesWithFilters(mappedFilters)
         console.log('Propiedades obtenidas:', propertiesData)
         setProperties(propertiesData)

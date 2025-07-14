@@ -6,17 +6,26 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, MapPin, Home, DollarSign } from "lucide-react"
+import { useSearchParams } from "next/navigation"
 
 export default function HeroSection() {
   const router = useRouter()
+  const searchParams = useSearchParams();
   const [searchData, setSearchData] = useState({
-    location: "",
-    propertyType: "",
-    priceRange: "",
-    operation: "venta",
+    location: searchParams.get("location") || "",
+    propertyType: searchParams.get("propertyType") || "",
+    priceRange: searchParams.get("priceRange") || "",
+    operation: searchParams.get("operation") || "venta",
   })
 
+  // Depuración: loguear cada vez que cambian los selects
+  const logSelects = (field: string, value: string) => {
+    console.log(`Cambio en ${field}:`, value)
+  }
+
   const handleSearch = () => {
+    // Depuración: loguear el estado antes de enviar
+    console.log('Datos a enviar:', searchData)
     // Construir URL con parámetros de búsqueda
     const params = new URLSearchParams()
     
@@ -35,6 +44,9 @@ export default function HeroSection() {
       handleSearch()
     }
   }
+
+  // Depuración: loguear el estado completo antes del render
+  console.log("Estado completo:", searchData);
 
   return (
     <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white overflow-hidden">
@@ -90,7 +102,10 @@ export default function HeroSection() {
 
             <Select
               value={searchData.propertyType}
-              onValueChange={(value) => setSearchData({ ...searchData, propertyType: value })}
+              onValueChange={(value) => {
+                logSelects('propertyType', value);
+                setSearchData({ ...searchData, propertyType: value })
+              }}
             >
               <SelectTrigger className="h-12 border-slate-300 focus:border-blue-500 focus:ring-blue-500">
                 <Home className="h-5 w-5 text-gray-400 mr-2" />
@@ -107,7 +122,10 @@ export default function HeroSection() {
 
             <Select
               value={searchData.priceRange}
-              onValueChange={(value) => setSearchData({ ...searchData, priceRange: value })}
+              onValueChange={(value) => {
+                logSelects('priceRange', value);
+                setSearchData({ ...searchData, priceRange: value })
+              }}
             >
               <SelectTrigger className="h-12 border-slate-300 focus:border-blue-500 focus:ring-blue-500">
                 <DollarSign className="h-5 w-5 text-gray-400 mr-2" />
