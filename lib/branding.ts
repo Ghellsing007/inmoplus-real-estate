@@ -1,5 +1,5 @@
 export const branding = {
-  appName: "Inmoplusxx",
+  appName: "Inmoplus",
   primaryColor: "#22c55e", // verde
   favicon: "/favicon.ico",
   logo: "/logo.svg",
