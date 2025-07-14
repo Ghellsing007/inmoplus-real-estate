@@ -2,13 +2,13 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
+import { branding } from "@/lib/branding"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "InmoPlus - Tu hogar ideal te espera",
-  description:
-    "Encuentra las mejores propiedades en venta y alquiler. Más de 10,000 propiedades disponibles con InmoPlus, tu socio de confianza en bienes raíces.",
+  title: branding.appName,
+  description: branding.metaDescription,
   keywords: "bienes raíces, propiedades, casas, apartamentos, venta, alquiler, inmobiliaria",
   authors: [{ name: "InmoPlus" }],
   openGraph: {
@@ -27,7 +27,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className={inter.className}>{children}</body>
+      <head>
+        <title>{branding.appName}</title>
+        <meta name="description" content={branding.metaDescription} />
+        <link rel="icon" href={branding.favicon} />
+      </head>
+      <body style={{ '--color-primary': branding.primaryColor } as any}>
+        {children}
+      </body>
     </html>
   )
 }

@@ -14,6 +14,7 @@ import {
 import { Menu, X, Home, User, Settings, LogOut, Heart, Building } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
 import { AuthModal } from "./AuthModal"
+import { branding } from "@/lib/branding"
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -36,7 +37,7 @@ export default function Navbar() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
               <Home className="h-8 w-8 text-blue-600" />
-              <span className="text-2xl font-bold text-gray-900">InmoPlus</span>
+              <span className="text-2xl font-bold text-gray-900">{branding.appName}</span>
             </Link>
           </div>
 

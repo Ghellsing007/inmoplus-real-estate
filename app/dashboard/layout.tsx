@@ -8,6 +8,7 @@ import { useState } from "react";
 import { User, Home, Users, Heart, Menu, ChevronLeft, ChevronRight, Building2} from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { branding } from "@/lib/branding"
 
 const menuIcons: Record<string, any> = {
   "/dashboard/profile": User,
@@ -40,7 +41,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Sidebar */}
         <aside className={cn("h-screen bg-white border-r border-slate-200 p-4 flex flex-col transition-all duration-300", collapsed ? "w-20" : "w-64") + " hidden md:flex"}>
           <div className="flex items-center justify-between mb-8">
-            <Link href="/dashboard" className={cn("text-xl font-bold text-blue-700 transition-all", collapsed && "hidden")}>Dashboard</Link>
+            <Link href="/dashboard" className={cn("text-xl font-bold text-blue-700 transition-all", collapsed && "hidden")}>{branding.appName}</Link>
             <button
               className="p-1 rounded hover:bg-blue-100 transition ml-auto"
               onClick={() => setCollapsed((c) => !c)}

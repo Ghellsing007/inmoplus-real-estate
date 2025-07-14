@@ -3,6 +3,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Image from "next/image";
+import { branding } from "@/lib/branding"
 
 const testimonios = [
   {
@@ -49,7 +50,7 @@ export default function AboutPage() {
         <section className="py-16 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white relative">
           <div className="absolute inset-0 bg-cover bg-center opacity-10" style={{backgroundImage: "url('/images/cozy-house-banner.png')"}} />
           <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Sobre InmoPlus</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Sobre {branding.appName}</h1>
             <p className="text-xl text-blue-100 mb-6">Tu aliado de confianza en el mundo inmobiliario</p>
           </div>
         </section>

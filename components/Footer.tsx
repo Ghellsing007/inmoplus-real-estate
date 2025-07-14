@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Home, Phone, Mail, MapPin, Facebook, Twitter, Instagram, Linkedin } from "lucide-react"
+import { branding } from "@/lib/branding"
 
 export default function Footer() {
   return (
@@ -12,7 +13,7 @@ export default function Footer() {
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-2 mb-6">
               <Home className="h-8 w-8 text-blue-400" />
-              <span className="text-2xl font-bold">InmoPlus</span>
+              <span className="text-2xl font-bold">{branding.appName}</span>
             </div>
             <p className="text-gray-300 mb-6 leading-relaxed">
               Tu socio de confianza en bienes raíces. Conectamos personas con sus hogares ideales desde hace más de 15
@@ -160,7 +161,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm mb-4 md:mb-0">© 2024 InmoPlus. Todos los derechos reservados.</p>
+            <p className="text-gray-400 text-sm mb-4 md:mb-0">© 2024 {branding.appName}. Todos los derechos reservados.</p>
             <div className="flex space-x-6 text-sm">
               <Link href="/privacy" className="text-gray-400 hover:text-blue-400 transition-colors">
                 Política de Privacidad
@@ -174,6 +175,9 @@ export default function Footer() {
             </div>
           </div>
         </div>
+      </div>
+      <div className="mt-8 text-center text-gray-400 text-sm">
+        Powered by <a href="https://gvservices.netlify.app/" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-600 ml-1">GVServices</a>
       </div>
     </footer>
   )
