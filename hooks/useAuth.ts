@@ -88,7 +88,6 @@ export function useAuth() {
 
   const fetchProfile = async (userId: string) => {
     try {
-      console.log('Fetching profile for user:', userId)
       
       const { data, error } = await supabase
         .from('users')
@@ -99,22 +98,18 @@ export function useAuth() {
       if (error) {
         // Si el perfil no existe, no es un error crítico
         if (error.code === 'PGRST116') {
-          console.log('Profile not found for user:', userId, '- This is normal for new users')
           setProfile(null)
           return
         }
         
         // Para otros errores, solo logear pero no mostrar error al usuario
-        console.log('Error fetching profile (non-critical):', error.message)
         setProfile(null)
         return
       }
 
-      console.log('Profile fetched successfully:', data)
       setProfile(data)
     } catch (error) {
       // Capturar cualquier error inesperado y no mostrarlo al usuario
-      console.log('Unexpected error fetching profile (non-critical):', error)
       setProfile(null)
     }
   }

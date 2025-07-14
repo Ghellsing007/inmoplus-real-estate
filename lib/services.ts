@@ -131,11 +131,11 @@ export const propertyService = {
       if (filters.city) {
         query = query.eq('city', filters.city)
       }
-      if (filters.property_type) {
-        query = query.eq('property_type', filters.property_type)
+      if (filters.type) {
+        query = query.eq('type', filters.type)
       }
-      if (filters.status) {
-        query = query.eq('status', filters.status)
+      if (filters.operation) {
+        query = query.eq('operation', filters.operation)
       }
       if (filters.minPrice) {
         query = query.gte('price', filters.minPrice)

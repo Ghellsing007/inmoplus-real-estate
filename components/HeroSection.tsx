@@ -70,7 +70,7 @@ export default function HeroSection() {
         </div>
 
         {/* Search Form */}
-        <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 max-w-5xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 max-w-5xl mx-auto text-gray-900">
           <div className="flex flex-col lg:flex-row gap-4 mb-6">
             <Button
               variant={searchData.operation === "venta" ? "default" : "outline"}
@@ -104,11 +104,11 @@ export default function HeroSection() {
               value={searchData.propertyType}
               onValueChange={(value) => {
                 logSelects('propertyType', value);
-                setSearchData({ ...searchData, propertyType: value })
+                setSearchData({ ...searchData, propertyType: value });
               }}
             >
-              <SelectTrigger className="h-12 border-slate-300 focus:border-blue-500 focus:ring-blue-500">
-                <Home className="h-5 w-5 text-gray-400 mr-2" />
+              <SelectTrigger className="h-12 border-slate-300 focus:border-blue-500 focus:ring-blue-500 flex gap-2 items-center text-gray-900">
+                <Home className="h-5 w-5 text-gray-400" />
                 <SelectValue placeholder="Tipo de propiedad" />
               </SelectTrigger>
               <SelectContent>
@@ -124,11 +124,11 @@ export default function HeroSection() {
               value={searchData.priceRange}
               onValueChange={(value) => {
                 logSelects('priceRange', value);
-                setSearchData({ ...searchData, priceRange: value })
+                setSearchData({ ...searchData, priceRange: value });
               }}
             >
-              <SelectTrigger className="h-12 border-slate-300 focus:border-blue-500 focus:ring-blue-500">
-                <DollarSign className="h-5 w-5 text-gray-400 mr-2" />
+              <SelectTrigger className="h-12 border-slate-300 focus:border-blue-500 focus:ring-blue-500 flex gap-2 items-center text-gray-900">
+                <DollarSign className="h-5 w-5 text-gray-400" />
                 <SelectValue placeholder="Rango de precio" />
               </SelectTrigger>
               <SelectContent>

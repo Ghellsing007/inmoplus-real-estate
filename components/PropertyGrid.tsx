@@ -65,8 +65,8 @@ export default function PropertyGrid({ initialFilters }: PropertyGridProps) {
         // Mapear los filtros del sidebar a los filtros del servicio
         const mappedFilters: any = {}
         if (filters.location) mappedFilters.city = filters.location
-        if (filters.propertyType.length > 0) mappedFilters.property_type = filters.propertyType[0] // Solo el primer tipo seleccionado
-        if (filters.operation !== "all") mappedFilters.status = filters.operation === "venta" ? "For Sale" : "For Rent"
+        if (filters.propertyType.length > 0) mappedFilters.type = filters.propertyType[0] // Solo el primer tipo seleccionado
+        if (filters.operation !== "all") mappedFilters.operation = filters.operation
         if (filters.priceRange) {
           mappedFilters.minPrice = filters.priceRange[0]
           mappedFilters.maxPrice = filters.priceRange[1]
