@@ -112,7 +112,7 @@ export const propertyService = {
   // Obtener propiedades con filtros
   async getPropertiesWithFilters(filters: {
     city?: string
-    property_type?: string
+    property_type?: string | string[]
     status?: string
     minPrice?: number
     maxPrice?: number
@@ -122,6 +122,7 @@ export const propertyService = {
     maxArea?: number
     furnished?: boolean
     parking?: boolean
+    operation?: string
   }): Promise<Property[]> {
     try {
       console.log('Filtros recibidos en el servicio:', filters)
@@ -132,7 +133,11 @@ export const propertyService = {
         query = query.eq('city', filters.city)
       }
       if (filters.property_type) {
-        query = query.eq('property_type', filters.property_type)
+        if (Array.isArray(filters.property_type) && filters.property_type.length > 0) {
+          query = query.in('property_type', filters.property_type)
+        } else if (typeof filters.property_type === 'string') {
+          query = query.eq('property_type', filters.property_type)
+        }
       }
       if (filters.operation) {
         query = query.eq('operation', filters.operation)

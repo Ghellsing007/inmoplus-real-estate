@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,6 +38,37 @@ export default function NewPropertyPage() {
   const { startUpload } = useUploadThing("inmuebleImage");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Estado para tipos y operaciones dinámicos
+  const [propertyTypes, setPropertyTypes] = useState<{ value: string, label: string }[]>([])
+  const [operations, setOperations] = useState<{ value: string, label: string }[]>([])
+  useEffect(() => {
+    async function fetchTypesAndOperations() {
+      // Tipos de propiedad
+      const { data: typesData } = await supabase
+        .from('properties')
+        .select('property_type')
+        .neq('property_type', null)
+        .neq('property_type', '')
+        .order('property_type', { ascending: true })
+      if (typesData) {
+        const uniqueTypes = Array.from(new Set(typesData.map((d: any) => d.property_type)))
+        setPropertyTypes(uniqueTypes.map((type: string) => ({ value: type, label: type.charAt(0).toUpperCase() + type.slice(1) })))
+      }
+      // Operaciones
+      const { data: opsData } = await supabase
+        .from('properties')
+        .select('operation')
+        .neq('operation', null)
+        .neq('operation', '')
+        .order('operation', { ascending: true })
+      if (opsData) {
+        const uniqueOps = Array.from(new Set(opsData.map((d: any) => d.operation)))
+        setOperations(uniqueOps.map((op: string) => ({ value: op, label: op.charAt(0).toUpperCase() + op.slice(1) })))
+      }
+    }
+    fetchTypesAndOperations()
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type, checked } = e.target;
@@ -182,11 +213,9 @@ export default function NewPropertyPage() {
                       <SelectValue placeholder="Tipo de propiedad" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="casa">Casa</SelectItem>
-                      <SelectItem value="apartamento">Apartamento</SelectItem>
-                      <SelectItem value="oficina">Oficina</SelectItem>
-                      <SelectItem value="local">Local Comercial</SelectItem>
-                      <SelectItem value="terreno">Terreno</SelectItem>
+                      {propertyTypes.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -197,8 +226,9 @@ export default function NewPropertyPage() {
                       <SelectValue placeholder="Operación" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="venta">Venta</SelectItem>
-                      <SelectItem value="alquiler">Alquiler</SelectItem>
+                      {operations.map((op) => (
+                        <SelectItem key={op.value} value={op.value}>{op.label}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>

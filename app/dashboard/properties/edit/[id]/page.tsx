@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { generateReactHelpers } from "@uploadthing/react";
 import type { OurFileRouter } from "@/app/api/uploadthing/route";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const { useUploadThing } = generateReactHelpers<OurFileRouter>();
 
@@ -19,6 +20,37 @@ export default function EditPropertyPage() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const { startUpload } = useUploadThing("inmuebleImage");
+
+  // Estado para tipos y operaciones dinámicos
+  const [propertyTypes, setPropertyTypes] = useState<{ value: string, label: string }[]>([])
+  const [operations, setOperations] = useState<{ value: string, label: string }[]>([])
+  useEffect(() => {
+    async function fetchTypesAndOperations() {
+      // Tipos de propiedad
+      const { data: typesData } = await supabase
+        .from('properties')
+        .select('property_type')
+        .neq('property_type', null)
+        .neq('property_type', '')
+        .order('property_type', { ascending: true })
+      if (typesData) {
+        const uniqueTypes = Array.from(new Set(typesData.map((d: any) => d.property_type)))
+        setPropertyTypes(uniqueTypes.map((type: string) => ({ value: type, label: type.charAt(0).toUpperCase() + type.slice(1) })))
+      }
+      // Operaciones
+      const { data: opsData } = await supabase
+        .from('properties')
+        .select('operation')
+        .neq('operation', null)
+        .neq('operation', '')
+        .order('operation', { ascending: true })
+      if (opsData) {
+        const uniqueOps = Array.from(new Set(opsData.map((d: any) => d.operation)))
+        setOperations(uniqueOps.map((op: string) => ({ value: op, label: op.charAt(0).toUpperCase() + op.slice(1) })))
+      }
+    }
+    fetchTypesAndOperations()
+  }, [])
 
   useEffect(() => {
     if (!id) return;
@@ -170,6 +202,28 @@ export default function EditPropertyPage() {
           onChange={handleChange}
           placeholder="Área (m²)"
         />
+        {/* Select dinámico para tipo */}
+        <Select name="property_type" value={property.property_type || ""} onValueChange={(value: string) => setProperty({ ...property, property_type: value })}>
+          <SelectTrigger>
+            <SelectValue placeholder="Tipo de propiedad" />
+          </SelectTrigger>
+          <SelectContent>
+            {propertyTypes.map((type) => (
+              <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {/* Select dinámico para operación */}
+        <Select name="operation" value={property.operation || ""} onValueChange={(value: string) => setProperty({ ...property, operation: value })}>
+          <SelectTrigger>
+            <SelectValue placeholder="Operación" />
+          </SelectTrigger>
+          <SelectContent>
+            {operations.map((op) => (
+              <SelectItem key={op.value} value={op.value}>{op.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         {/* Campo para editar imágenes (array de URLs) con subida */}
         <div>
           <div className="flex items-center justify-between mb-1">

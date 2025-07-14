@@ -6,6 +6,7 @@ import PropertyCard from "@/components/PropertyCard";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Plus } from "lucide-react"
 
 export default function PropertiesPage() {
   const [properties, setProperties] = useState<any[]>([]);
@@ -57,7 +58,16 @@ export default function PropertiesPage() {
 
   return (
     <div className="max-w-5xl mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-6">Propiedades disponibles</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold">Propiedades disponibles</h1>
+        <Button
+          className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+          onClick={() => router.push("/dashboard/properties/new")}
+        >
+          <Plus className="h-5 w-5" />
+          Nueva propiedad
+        </Button>
+      </div>
       {loading && <div>Cargando propiedades...</div>}
       {error && <div className="text-red-500">{error}</div>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
