@@ -27,6 +27,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { href: "/dashboard/agents", label: "Agentes", roles: ["admin"] },
     { href: "/dashboard/users", label: "Usuarios", roles: ["admin"] },
     { href: "/dashboard/faqs", label: "FAQs", roles: ["admin"] },
+    { href: "/dashboard/blogs", label: "Blogs", roles: ["admin"] },
     { href: "/dashboard/favorites", label: "Favoritos", roles: ["client"] },
   ];
 
@@ -37,7 +38,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Sidebar */}
         <aside className={cn("h-screen bg-white border-r border-slate-200 p-4 flex flex-col transition-all duration-300", collapsed ? "w-20" : "w-64") + " hidden md:flex"}>
           <div className="flex items-center justify-between mb-8">
-            <span className={cn("text-xl font-bold text-blue-700 transition-all", collapsed && "hidden")}>Dashboard</span>
+            <Link href="/dashboard" className={cn("text-xl font-bold text-blue-700 transition-all", collapsed && "hidden")}>Dashboard</Link>
             <button
               className="p-1 rounded hover:bg-blue-100 transition ml-auto"
               onClick={() => setCollapsed((c) => !c)}

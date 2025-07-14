@@ -49,6 +49,13 @@ export default function DashboardHome() {
       href: "/dashboard/faqs",
       link: "Ir a FAQs",
     },
+    {
+      title: "Gestión de Blogs",
+      icon: <Building2 className="h-5 w-5" />,
+      desc: "Crea, edita y elimina entradas del blog de la plataforma.",
+      href: "/dashboard/blogs",
+      link: "Ir a Blogs",
+    },
     // Agrega aquí más accesos directos según se necesiten
   ];
 
@@ -65,18 +72,18 @@ export default function DashboardHome() {
   return (
     <div className="max-w-5xl mx-auto py-8 px-4">
       {profile.role === "admin" && (
-        <Carousel className="mb-8" opts={{ slidesToScroll: 1 }}>
+        <Carousel className="mb-8 w-full max-w-5xl mx-auto" opts={{ slidesToScroll: 1 }}>
           <CarouselContent>
             {adminSlides.map((slide, idx) => (
               <CarouselItem key={idx} className="flex gap-6">
                 {slide.map((card) => (
-                  <Card key={card.href} className="flex-1 min-w-0">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">{card.icon} {card.title}</CardTitle>
+                  <Card key={card.href} className="flex-1 min-w-0 max-w-xs w-full h-64 flex flex-col justify-between items-center p-4">
+                    <CardHeader className="w-full flex flex-col items-center justify-center p-0 mb-2">
+                      <CardTitle className="flex items-center gap-2 text-lg text-center w-full justify-center">{card.icon} {card.title}</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      <p className="mb-4">{card.desc}</p>
-                      <Link href={card.href} className="text-blue-600 hover:underline font-semibold">{card.link}</Link>
+                    <CardContent className="flex-1 flex flex-col justify-between w-full p-0">
+                      <p className="mb-4 text-base text-center break-words line-clamp-4 max-h-20 overflow-hidden">{card.desc}</p>
+                      <Link href={card.href} className="text-blue-600 hover:underline font-semibold mt-auto block text-center truncate w-full">{card.link}</Link>
                     </CardContent>
                   </Card>
                 ))}

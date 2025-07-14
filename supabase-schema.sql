@@ -103,6 +103,18 @@ CREATE TABLE IF NOT EXISTS faqs (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Tabla de blogs
+CREATE TABLE IF NOT EXISTS blogs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    author VARCHAR(255),
+    image TEXT,
+    order_index INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Índices para mejorar el rendimiento
 CREATE INDEX IF NOT EXISTS idx_properties_agent_id ON properties(agent_id);
 CREATE INDEX IF NOT EXISTS idx_properties_city ON properties(city);
@@ -227,6 +239,14 @@ CREATE POLICY "Admins can manage faqs" ON faqs FOR ALL USING (EXISTS (SELECT 1 F
 
 -- Trigger para updated_at en faqs
 CREATE TRIGGER update_faqs_updated_at BEFORE UPDATE ON faqs FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Políticas de seguridad RLS para blogs
+ALTER TABLE blogs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public can view blogs" ON blogs FOR SELECT USING (true);
+CREATE POLICY "Admins can manage blogs" ON blogs FOR ALL USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin'));
+
+-- Trigger para updated_at en blogs
+CREATE TRIGGER update_blogs_updated_at BEFORE UPDATE ON blogs FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Datos de ejemplo para agentes
 INSERT INTO agents (id, name, email, phone, specialization, rating, reviews, properties_count) VALUES
