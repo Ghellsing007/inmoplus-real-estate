@@ -98,6 +98,13 @@ INSERT INTO faqs (question, answer, order_index) VALUES
 ('¿Manejan propiedades comerciales además de residenciales?', 'Absolutamente. Manejamos todo tipo de propiedades: residenciales (casas, apartamentos), comerciales (oficinas, locales, bodegas), industriales y terrenos. Tenemos agentes especializados en cada sector para brindarte el mejor servicio.', 5)
 ON CONFLICT DO NOTHING;
 
+-- ===== DATOS DE BLOGS =====
+INSERT INTO blogs (title, content, author, image, order_index) VALUES
+('Tendencias del mercado inmobiliario 2024', 'Descubre las claves y oportunidades del sector para este año. El mercado inmobiliario en 2024 presenta nuevas oportunidades de inversión y cambios en la demanda de vivienda.', 'Equipo InmoPlus', '/images/modern-villa.jpg', 0),
+('Guía para comprar tu primera vivienda', 'Consejos prácticos para dar el paso con seguridad y éxito. Analizamos los pasos clave para adquirir tu primera vivienda y evitar errores comunes.', 'María García', '/images/coastal-bay.jpg', 1),
+('¿Alquilar o comprar? Ventajas y desventajas', 'Analizamos las mejores opciones según tu perfil y necesidades. Comprar o alquilar depende de tu situación financiera y tus objetivos a largo plazo.', 'Carlos Rodríguez', '/images/modern-interior.jpg', 2)
+ON CONFLICT DO NOTHING;
+
 -- ===== ACTUALIZAR CONTADORES DE PROPIEDADES DE AGENTES =====
 UPDATE agents SET properties_count = (
   SELECT COUNT(*) FROM properties WHERE agent_id = agents.id

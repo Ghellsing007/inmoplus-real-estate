@@ -13,69 +13,70 @@ import {
 } from "@/components/ui/carousel";
 import { UploadButton } from "@uploadthing/react";
 
-interface Blog {
+interface Testimonial {
   id: string;
-  title: string;
-  content: string;
-  author: string;
+  name: string;
+  role: string;
+  testimonial: string;
+  rating: number;
   image: string;
   order_index: number;
 }
 
-export default function BlogsDashboardPage() {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [editing, setEditing] = useState<Blog | null>(null);
-  const [newBlog, setNewBlog] = useState({ title: "", content: "", author: "", image: "" });
+export default function TestimonialsDashboardPage() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [editing, setEditing] = useState<Testimonial | null>(null);
+  const [newTestimonial, setNewTestimonial] = useState({ name: "", role: "", testimonial: "", rating: 5, image: "" });
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
 
   useEffect(() => {
-    fetchBlogs();
+    fetchTestimonials();
   }, []);
 
-  async function fetchBlogs() {
+  async function fetchTestimonials() {
     setLoading(true);
-    const res = await fetch("/api/blogs");
+    const res = await fetch("/api/testimonials");
     const data = await res.json();
-    setBlogs(Array.isArray(data) ? data : []);
+    setTestimonials(Array.isArray(data) ? data : []);
     setLoading(false);
   }
 
   async function handleCreate() {
-    if (!newBlog.title.trim() || !newBlog.content.trim()) return;
+    if (!newTestimonial.name.trim() || !newTestimonial.testimonial.trim()) return;
     setLoading(true);
-    await fetch("/api/blogs", {
+    await fetch("/api/testimonials", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...newBlog, order_index: blogs.length }),
+      body: JSON.stringify({ ...newTestimonial, order_index: testimonials.length }),
     });
-    setNewBlog({ title: "", content: "", author: "", image: "" });
-    fetchBlogs();
+    setNewTestimonial({ name: "", role: "", testimonial: "", rating: 5, image: "" });
+    setImagePreview("");
+    fetchTestimonials();
   }
 
   async function handleEdit() {
     if (!editing) return;
     setLoading(true);
-    await fetch("/api/blogs", {
+    await fetch("/api/testimonials", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(editing),
     });
     setEditing(null);
-    fetchBlogs();
+    fetchTestimonials();
   }
 
   async function handleDelete(id: string) {
     setLoading(true);
-    await fetch("/api/blogs", {
+    await fetch("/api/testimonials", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
     });
-    fetchBlogs();
+    fetchTestimonials();
   }
 
-  // Agrupar los blogs en slides de 1
   function chunkArray<T>(arr: T[], size: number): T[][] {
     const res = [];
     for (let i = 0; i < arr.length; i += size) {
@@ -83,34 +84,34 @@ export default function BlogsDashboardPage() {
     }
     return res;
   }
-  const blogSlides = chunkArray(blogs, 1);
+  const testimonialSlides = chunkArray(testimonials, 1);
 
   return (
     <div className="max-w-3xl mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-8">Gestión de Blogs</h1>
-      {/* Crear nuevo blog */}
+      <h1 className="text-3xl font-bold mb-8">Gestión de Testimonios</h1>
+      {/* Crear nuevo testimonio */}
       <div className="mb-8 p-4 bg-slate-50 rounded-lg border">
-        <h2 className="font-semibold mb-2">Agregar nuevo blog</h2>
+        <h2 className="font-semibold mb-2">Agregar nuevo testimonio</h2>
         <Input
-          placeholder="Título"
-          value={newBlog.title}
-          onChange={e => setNewBlog({ ...newBlog, title: e.target.value })}
+          placeholder="Nombre"
+          value={newTestimonial.name}
+          onChange={e => setNewTestimonial({ ...newTestimonial, name: e.target.value })}
           className="mb-2"
         />
         <Input
-          placeholder="Autor"
-          value={newBlog.author}
-          onChange={e => setNewBlog({ ...newBlog, author: e.target.value })}
+          placeholder="Rol (ej: Comprador de Casa)"
+          value={newTestimonial.role}
+          onChange={e => setNewTestimonial({ ...newTestimonial, role: e.target.value })}
           className="mb-2"
         />
         <div className="mb-2">
-          <label className="block font-medium mb-1">Imagen del blog</label>
+          <label className="block font-medium mb-1">Imagen del cliente</label>
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gray-400 transition-colors">
             <UploadButton
               endpoint="inmuebleImage"
               onClientUploadComplete={(res) => {
                 if (res && res[0]?.url) {
-                  setNewBlog((prev) => ({ ...prev, image: res[0].url }));
+                  setNewTestimonial((prev) => ({ ...prev, image: res[0].url }));
                   setImagePreview(res[0].url);
                 }
               }}
@@ -119,13 +120,13 @@ export default function BlogsDashboardPage() {
               }}
               className="ut-button:bg-white ut-button:hover:bg-gray-50 ut-button:text-black ut-button:font-medium ut-button:px-4 ut-button:py-2 ut-button:rounded-md ut-button:transition-colors ut-button:border ut-button:border-gray-300 ut-button:hover:border-gray-400"
             />
-            <p className="text-sm text-gray-500 mt-2">Haz clic para subir una imagen o arrastra y suelta</p>
+            <p className="text-sm text-black mt-2">Haz clic para subir una imagen o arrastra y suelta</p>
           </div>
           <Input
             placeholder="URL de la imagen"
-            value={newBlog.image}
+            value={newTestimonial.image}
             onChange={e => {
-              setNewBlog({ ...newBlog, image: e.target.value });
+              setNewTestimonial({ ...newTestimonial, image: e.target.value });
               setImagePreview(e.target.value);
             }}
             className="mt-2"
@@ -135,36 +136,45 @@ export default function BlogsDashboardPage() {
           )}
         </div>
         <Textarea
-          placeholder="Contenido"
-          value={newBlog.content}
-          onChange={e => setNewBlog({ ...newBlog, content: e.target.value })}
+          placeholder="Testimonio"
+          value={newTestimonial.testimonial}
+          onChange={e => setNewTestimonial({ ...newTestimonial, testimonial: e.target.value })}
           className="mb-2"
         />
-        <Button onClick={handleCreate} disabled={loading || !newBlog.title || !newBlog.content}>
+        <Input
+          type="number"
+          min={1}
+          max={5}
+          placeholder="Rating (1-5)"
+          value={newTestimonial.rating}
+          onChange={e => setNewTestimonial({ ...newTestimonial, rating: Number(e.target.value) })}
+          className="mb-2"
+        />
+        <Button onClick={handleCreate} disabled={loading || !newTestimonial.name || !newTestimonial.testimonial}>
           Agregar
         </Button>
       </div>
-      {/* Listado de blogs */}
+      {/* Listado de testimonios */}
       <Carousel className="mb-8 w-full max-w-5xl mx-auto" opts={{ slidesToScroll: 1 }}>
         <CarouselContent>
-          {blogSlides.map((slide, idx) => (
+          {testimonialSlides.map((slide, idx) => (
             <CarouselItem key={idx} className="flex justify-center">
-              {slide.map((blog) => (
-                <div key={blog.id} className="w-full max-w-2xl p-6 border rounded-lg bg-white flex flex-col gap-2 shadow-md">
-                  {editing?.id === blog.id ? (
+              {slide.map((t) => (
+                <div key={t.id} className="w-full max-w-2xl p-6 border rounded-lg bg-white flex flex-col gap-2 shadow-md">
+                  {editing?.id === t.id ? (
                     <>
                       <Input
-                        value={editing.title}
-                        onChange={e => setEditing({ ...editing, title: e.target.value })}
+                        value={editing.name}
+                        onChange={e => setEditing({ ...editing, name: e.target.value })}
                         className="mb-2"
                       />
                       <Input
-                        value={editing.author}
-                        onChange={e => setEditing({ ...editing, author: e.target.value })}
+                        value={editing.role}
+                        onChange={e => setEditing({ ...editing, role: e.target.value })}
                         className="mb-2"
                       />
                       <div className="mb-2">
-                        <label className="block font-medium mb-1">Imagen del blog</label>
+                        <label className="block font-medium mb-1">Imagen del cliente</label>
                         <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gray-400 transition-colors">
                           <UploadButton
                             endpoint="inmuebleImage"
@@ -192,8 +202,16 @@ export default function BlogsDashboardPage() {
                         )}
                       </div>
                       <Textarea
-                        value={editing.content}
-                        onChange={e => setEditing({ ...editing, content: e.target.value })}
+                        value={editing.testimonial}
+                        onChange={e => setEditing({ ...editing, testimonial: e.target.value })}
+                        className="mb-2"
+                      />
+                      <Input
+                        type="number"
+                        min={1}
+                        max={5}
+                        value={editing.rating}
+                        onChange={e => setEditing({ ...editing, rating: Number(e.target.value) })}
                         className="mb-2"
                       />
                       <div className="flex gap-2">
@@ -203,13 +221,25 @@ export default function BlogsDashboardPage() {
                     </>
                   ) : (
                     <>
-                      <div className="font-semibold text-xl mb-2">{blog.title}</div>
-                      <div className="text-gray-600 text-sm mb-1">Por: {blog.author || "Sin autor"}</div>
-                      {blog.image && <img src={blog.image} alt={blog.title} className="w-full max-h-48 object-cover rounded mb-2" />}
-                      <div className="text-gray-700 text-base mb-4 whitespace-pre-line line-clamp-6">{blog.content}</div>
+                      <div className="flex items-center gap-4 mb-2">
+                        {t.image && <img src={t.image} alt={t.name} className="w-16 h-16 rounded-full object-cover border" />}
+                        <div>
+                          <div className="font-semibold text-lg">{t.name}</div>
+                          <div className="text-blue-600 text-sm">{t.role}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center mb-2">
+                        {Array.from({ length: t.rating }).map((_, i) => (
+                          <span key={i} className="text-yellow-400 text-xl">★</span>
+                        ))}
+                        {Array.from({ length: 5 - t.rating }).map((_, i) => (
+                          <span key={i} className="text-gray-300 text-xl">★</span>
+                        ))}
+                      </div>
+                      <div className="italic text-gray-700 text-base mb-4 whitespace-pre-line line-clamp-6">"{t.testimonial}"</div>
                       <div className="flex gap-2 mt-2">
-                        <Button size="sm" onClick={() => setEditing(blog)} disabled={loading}>Editar</Button>
-                        <Button size="sm" variant="outline" onClick={() => handleDelete(blog.id)} disabled={loading}>Eliminar</Button>
+                        <Button size="sm" onClick={() => setEditing(t)} disabled={loading}>Editar</Button>
+                        <Button size="sm" variant="outline" onClick={() => handleDelete(t.id)} disabled={loading}>Eliminar</Button>
                       </div>
                     </>
                   )}
@@ -221,7 +251,7 @@ export default function BlogsDashboardPage() {
         <CarouselPrevious />
         <CarouselNext />
       </Carousel>
-      {blogs.length === 0 && <div className="text-gray-500">No hay blogs registrados.</div>}
+      {testimonials.length === 0 && <div className="text-gray-500">No hay testimonios registrados.</div>}
     </div>
   );
 } 

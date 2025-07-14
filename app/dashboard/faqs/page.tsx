@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
 
 interface FAQ {
   id: string;
@@ -68,6 +75,16 @@ export default function FaqsDashboardPage() {
     fetchFaqs();
   }
 
+  // Agrupar las FAQs en slides de 1
+  function chunkArray<T>(arr: T[], size: number): T[][] {
+    const res = [];
+    for (let i = 0; i < arr.length; i += size) {
+      res.push(arr.slice(i, i + size));
+    }
+    return res;
+  }
+  const faqSlides = chunkArray(faqs, 1);
+
   return (
     <div className="max-w-3xl mx-auto py-10">
       <h1 className="text-3xl font-bold mb-8">Gestión de Preguntas Frecuentes (FAQs)</h1>
@@ -93,40 +110,48 @@ export default function FaqsDashboardPage() {
       </div>
 
       {/* Listado de FAQs */}
-      <div className="space-y-6">
-        {faqs.map((faq, idx) => (
-          <div key={faq.id} className="p-4 border rounded-lg bg-white flex flex-col gap-2">
-            {editing?.id === faq.id ? (
-              <>
-                <Input
-                  value={editing.question}
-                  onChange={e => setEditing({ ...editing, question: e.target.value })}
-                  className="mb-2"
-                />
-                <Textarea
-                  value={editing.answer}
-                  onChange={e => setEditing({ ...editing, answer: e.target.value })}
-                  className="mb-2"
-                />
-                <div className="flex gap-2">
-                  <Button onClick={handleEdit} disabled={loading}>Guardar</Button>
-                  <Button variant="outline" onClick={() => setEditing(null)} disabled={loading}>Cancelar</Button>
+      <Carousel className="mb-8 w-full max-w-5xl mx-auto" opts={{ slidesToScroll: 1 }}>
+        <CarouselContent>
+          {faqSlides.map((slide, idx) => (
+            <CarouselItem key={idx} className="flex justify-center">
+              {slide.map((faq) => (
+                <div key={faq.id} className="w-full max-w-2xl p-6 border rounded-lg bg-white flex flex-col gap-2 shadow-md">
+                  {editing?.id === faq.id ? (
+                    <>
+                      <Input
+                        value={editing.question}
+                        onChange={e => setEditing({ ...editing, question: e.target.value })}
+                        className="mb-2"
+                      />
+                      <Textarea
+                        value={editing.answer}
+                        onChange={e => setEditing({ ...editing, answer: e.target.value })}
+                        className="mb-2"
+                      />
+                      <div className="flex gap-2">
+                        <Button onClick={handleEdit} disabled={loading}>Guardar</Button>
+                        <Button variant="outline" onClick={() => setEditing(null)} disabled={loading}>Cancelar</Button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="font-semibold text-xl mb-2">{faq.question}</div>
+                      <div className="text-gray-700 text-base mb-4 whitespace-pre-line">{faq.answer}</div>
+                      <div className="flex gap-2 mt-2">
+                        <Button size="sm" onClick={() => setEditing(faq)} disabled={loading}>Editar</Button>
+                        <Button size="sm" variant="outline" onClick={() => handleDelete(faq.id)} disabled={loading}>Eliminar</Button>
+                      </div>
+                    </>
+                  )}
                 </div>
-              </>
-            ) : (
-              <>
-                <div className="font-semibold">{faq.question}</div>
-                <div className="text-gray-700 whitespace-pre-line">{faq.answer}</div>
-                <div className="flex gap-2 mt-2">
-                  <Button size="sm" onClick={() => setEditing(faq)} disabled={loading}>Editar</Button>
-                  <Button size="sm" variant="outline" onClick={() => handleDelete(faq.id)} disabled={loading}>Eliminar</Button>
-                </div>
-              </>
-            )}
-          </div>
-        ))}
-        {faqs.length === 0 && <div className="text-gray-500">No hay preguntas frecuentes registradas.</div>}
-      </div>
+              ))}
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+      {faqs.length === 0 && <div className="text-gray-500">No hay preguntas frecuentes registradas.</div>}
     </div>
   );
 } 

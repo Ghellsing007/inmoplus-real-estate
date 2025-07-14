@@ -3,7 +3,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { Building2, Users, Heart, User } from "lucide-react";
+import { Building2, Users, Heart, User, Star } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -56,6 +56,13 @@ export default function DashboardHome() {
       href: "/dashboard/blogs",
       link: "Ir a Blogs",
     },
+    {
+      title: "Gestión de Testimonios",
+      icon: <Star className="h-5 w-5 text-yellow-500" />,
+      desc: "Administra los testimonios de clientes que se muestran en la web pública.",
+      href: "/dashboard/testimonials",
+      link: "Ir a Testimonios",
+    },
     // Agrega aquí más accesos directos según se necesiten
   ];
 
@@ -72,27 +79,31 @@ export default function DashboardHome() {
   return (
     <div className="max-w-5xl mx-auto py-8 px-4">
       {profile.role === "admin" && (
-        <Carousel className="mb-8 w-full max-w-5xl mx-auto" opts={{ slidesToScroll: 1 }}>
-          <CarouselContent>
-            {adminSlides.map((slide, idx) => (
-              <CarouselItem key={idx} className="flex gap-6">
-                {slide.map((card) => (
-                  <Card key={card.href} className="flex-1 min-w-0 max-w-xs w-full h-64 flex flex-col justify-between items-center p-4">
-                    <CardHeader className="w-full flex flex-col items-center justify-center p-0 mb-2">
-                      <CardTitle className="flex items-center gap-2 text-lg text-center w-full justify-center">{card.icon} {card.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex-1 flex flex-col justify-between w-full p-0">
-                      <p className="mb-4 text-base text-center break-words line-clamp-4 max-h-20 overflow-hidden">{card.desc}</p>
-                      <Link href={card.href} className="text-blue-600 hover:underline font-semibold mt-auto block text-center truncate w-full">{card.link}</Link>
-                    </CardContent>
-                  </Card>
+        <div className="relative mb-8 w-full max-w-5xl mx-auto">
+          <Carousel opts={{ slidesToScroll: 1 }}>
+            <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 z-10" />
+            <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 z-10" />
+            <div className="flex-1">
+              <CarouselContent>
+                {adminSlides.map((slide, idx) => (
+                  <CarouselItem key={idx} className="flex gap-6">
+                    {slide.map((card) => (
+                      <Card key={card.href} className="flex-1 min-w-0 max-w-xs w-full h-64 flex flex-col justify-between items-center p-4">
+                        <CardHeader className="w-full flex flex-col items-center justify-center p-0 mb-2">
+                          <CardTitle className="flex items-center gap-2 text-lg text-center w-full justify-center">{card.icon} {card.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex-1 flex flex-col justify-between w-full p-0">
+                          <p className="mb-4 text-base text-center break-words line-clamp-4 max-h-20 overflow-hidden">{card.desc}</p>
+                          <Link href={card.href} className="text-blue-600 hover:underline font-semibold mt-auto block text-center truncate w-full">{card.link}</Link>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </CarouselItem>
                 ))}
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+              </CarouselContent>
+            </div>
+          </Carousel>
+        </div>
       )}
       {/* Agente: solo propiedades */}
       {profile.role === "agent" && (

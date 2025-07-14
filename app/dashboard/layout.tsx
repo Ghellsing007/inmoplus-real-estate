@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { User, Home, Users, Heart, Menu, ChevronLeft, ChevronRight, Building2 } from "lucide-react";
+import { User, Home, Users, Heart, Menu, ChevronLeft, ChevronRight, Building2,Start} from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -14,6 +14,7 @@ const menuIcons: Record<string, any> = {
   "/dashboard/properties": Building2,
   "/dashboard/users": Users,
   "/dashboard/favorites": Heart,
+  
 };
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -28,6 +29,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { href: "/dashboard/users", label: "Usuarios", roles: ["admin"] },
     { href: "/dashboard/faqs", label: "FAQs", roles: ["admin"] },
     { href: "/dashboard/blogs", label: "Blogs", roles: ["admin"] },
+    { href: "/dashboard/testimonials", label: "testimonials", roles: ["admin"] },
     { href: "/dashboard/favorites", label: "Favoritos", roles: ["client"] },
   ];
 

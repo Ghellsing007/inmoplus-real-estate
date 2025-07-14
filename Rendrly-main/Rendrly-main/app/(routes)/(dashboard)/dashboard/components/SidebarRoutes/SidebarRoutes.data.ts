@@ -1,4 +1,4 @@
-import {Calendar, Car, Heart,AlignJustify } from "lucide-react";
+import {Calendar, Car, Heart,AlignJustify, HelpCircle, BookOpen, Star} from "lucide-react";
 
 export const dataGeneralSidebar = [
     {
@@ -29,5 +29,3 @@ export const dataAdminSidebar = [
         label: "All reserves",
         href: "/dashboard/admin/reserves-admin"
     },
-   
-]

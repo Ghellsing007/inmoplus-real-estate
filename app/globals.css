@@ -115,3 +115,46 @@ input::placeholder, textarea::placeholder {
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* Forzar que todo el texto dentro del botón de UploadThing sea negro */
+.ut-button,
+.ut-button *,
+.ut-upload-btn,
+.ut-upload-btn *,
+.ut-upload-btn span,
+.ut-upload-btn label {
+  color: #111 !important;
+}
+
+/* Forzar texto negro en el label del botón de UploadThing aunque tenga text-white */
+label[data-ut-element="button"] {
+  color: #111 !important;
+}
+label[data-ut-element="button"] * {
+  color: #111 !important;
+}
+
+/* Hacer que el label UploadThing luzca y actúe como un botón moderno */
+label[data-ut-element="button"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 2.5rem !important; /* 40px */
+  min-width: 9rem !important; /* 144px */
+  padding: 0 1.5rem !important;
+  background: #fff !important;
+  color: #111 !important;
+  border: 1.5px solid #3b82f6 !important; /* azul */
+  border-radius: 0.5rem !important;
+  font-weight: 500 !important;
+  font-size: 1rem !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  transition: background 0.2s, border 0.2s;
+}
+label[data-ut-element="button"]:hover,
+label[data-ut-element="button"]:focus {
+  background: #e0e7ff !important;
+  border-color: #2563eb !important;
+  color: #111 !important;
+}

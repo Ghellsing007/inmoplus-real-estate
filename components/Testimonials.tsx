@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, Star, Quote } from "lucide-react"
@@ -9,52 +9,26 @@ interface Testimonial {
   id: string
   name: string
   role: string
-  content: string
+  testimonial: string
   rating: number
-  avatar: string
+  image: string
 }
 
 export default function Testimonials() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [loading, setLoading] = useState(true)
 
-  const testimonials: Testimonial[] = [
-    {
-      id: "1",
-      name: "María González",
-      role: "Compradora de Casa",
-      content:
-        "InmoPlus hizo que encontrar nuestra casa de ensueño fuera increíblemente fácil. Su equipo nos guió en cada paso del proceso y siempre estuvieron disponibles para responder nuestras preguntas.",
-      rating: 5,
-      avatar: "/placeholder.svg?height=80&width=80",
-    },
-    {
-      id: "2",
-      name: "Carlos Rodríguez",
-      role: "Inversionista",
-      content:
-        "Como inversionista inmobiliario, he trabajado con muchas agencias, pero InmoPlus se destaca por su profesionalismo y conocimiento del mercado. Altamente recomendados.",
-      rating: 5,
-      avatar: "/placeholder.svg?height=80&width=80",
-    },
-    {
-      id: "3",
-      name: "Ana Martínez",
-      role: "Vendedora de Apartamento",
-      content:
-        "Vendí mi apartamento en tiempo récord gracias al excelente trabajo de marketing y la amplia red de contactos de InmoPlus. Superaron todas mis expectativas.",
-      rating: 5,
-      avatar: "/placeholder.svg?height=80&width=80",
-    },
-    {
-      id: "4",
-      name: "Roberto Silva",
-      role: "Comprador Primerizo",
-      content:
-        "Como comprador primerizo, tenía muchas dudas. El equipo de InmoPlus me educó sobre el proceso y me ayudó a tomar la mejor decisión. Excelente servicio.",
-      rating: 5,
-      avatar: "/placeholder.svg?height=80&width=80",
-    },
-  ]
+  useEffect(() => {
+    async function fetchTestimonials() {
+      setLoading(true)
+      const res = await fetch("/api/testimonials")
+      const data = await res.json()
+      setTestimonials(Array.isArray(data) ? data : [])
+      setLoading(false)
+    }
+    fetchTestimonials()
+  }, [])
 
   const nextTestimonial = () => {
     setCurrentIndex((prevIndex) => (prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1))
@@ -66,6 +40,42 @@ export default function Testimonials() {
 
   const goToTestimonial = (index: number) => {
     setCurrentIndex(index)
+  }
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            Lo que dicen nuestros
+            <span className="text-blue-600"> clientes</span>
+          </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            Miles de familias han confiado en nosotros para encontrar su hogar ideal. Estas son algunas de sus
+            experiencias.
+          </p>
+          <div className="text-gray-400">Cargando testimonios...</div>
+        </div>
+      </section>
+    )
+  }
+
+  if (!testimonials.length) {
+    return (
+      <section className="py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            Lo que dicen nuestros
+            <span className="text-blue-600"> clientes</span>
+          </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            Miles de familias han confiado en nosotros para encontrar su hogar ideal. Estas son algunas de sus
+            experiencias.
+          </p>
+          <div className="text-gray-400">No hay testimonios registrados.</div>
+        </div>
+      </section>
+    )
   }
 
   return (
@@ -90,7 +100,7 @@ export default function Testimonials() {
                 <div className="flex-shrink-0">
                   <div className="relative">
                     <img
-                      src={testimonials[currentIndex].avatar || "/placeholder.svg"}
+                      src={testimonials[currentIndex].image || "/placeholder.svg"}
                       alt={testimonials[currentIndex].name}
                       className="w-20 h-20 rounded-full object-cover"
                     />
@@ -108,7 +118,7 @@ export default function Testimonials() {
                   </div>
 
                   <blockquote className="text-lg md:text-xl text-gray-700 mb-6 leading-relaxed italic">
-                    "{testimonials[currentIndex].content}"
+                    "{testimonials[currentIndex].testimonial}"
                   </blockquote>
 
                   <div>
