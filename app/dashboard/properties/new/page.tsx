@@ -12,8 +12,66 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
 import { generateReactHelpers } from "@uploadthing/react";
 import type { OurFileRouter } from "@/app/api/uploadthing/route";
+import { Skeleton } from "@/components/ui/skeleton"
 
 const { useUploadThing } = generateReactHelpers<OurFileRouter>();
+
+function FormSkeleton() {
+  return (
+    <div className="min-h-screen bg-slate-50 py-8">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-8 w-1/2 mb-2" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {[...Array(2)].map((_, i) => (
+                <div key={i}>
+                  <Skeleton className="h-5 w-1/4 mb-2" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              ))}
+              <div className="grid grid-cols-2 gap-4">
+                {[...Array(2)].map((_, i) => (
+                  <div key={i}>
+                    <Skeleton className="h-5 w-1/3 mb-2" />
+                    <Skeleton className="h-10 w-full" />
+                  </div>
+                ))}
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {[...Array(2)].map((_, i) => (
+                  <div key={i}>
+                    <Skeleton className="h-5 w-1/3 mb-2" />
+                    <Skeleton className="h-10 w-full" />
+                  </div>
+                ))}
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {[...Array(2)].map((_, i) => (
+                  <div key={i}>
+                    <Skeleton className="h-5 w-1/3 mb-2" />
+                    <Skeleton className="h-10 w-full" />
+                  </div>
+                ))}
+              </div>
+              <Skeleton className="h-5 w-1/4 mb-2" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-5 w-1/4 mb-2" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-5 w-1/4 mb-2" />
+              <Skeleton className="h-10 w-full" />
+              <div className="flex justify-end">
+                <Skeleton className="h-10 w-40" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
 
 export default function NewPropertyPage() {
   const router = useRouter();
@@ -167,6 +225,8 @@ export default function NewPropertyPage() {
       setLoading(false);
     }
   };
+
+  if (loading) return <FormSkeleton />
 
   return (
     <div className="min-h-screen bg-slate-50 py-8">

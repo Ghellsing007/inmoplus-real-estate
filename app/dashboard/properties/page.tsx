@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import PropertyCard from "@/components/PropertyCard";
+import PropertyCard, { PropertyCardSkeleton } from "@/components/PropertyCard";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -68,24 +68,25 @@ export default function PropertiesPage() {
           Nueva propiedad
         </Button>
       </div>
-      {loading && <div>Cargando propiedades...</div>}
       {error && <div className="text-red-500">{error}</div>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {properties.map((prop) => (
-          <div key={prop.id} className="relative group">
-            <PropertyCard property={prop} />
-            {canManage(profile) && (
-              <div className="absolute top-4 right-4 flex flex-col gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button size="sm" variant="outline" onClick={() => handleEdit(prop.id)}>
-                  Editar
-                </Button>
-                <Button size="sm" variant="destructive" onClick={() => handleDelete(prop.id)}>
-                  Eliminar
-                </Button>
+        {loading
+          ? [...Array(6)].map((_, i) => <PropertyCardSkeleton key={i} />)
+          : properties.map((prop) => (
+              <div key={prop.id} className="relative group">
+                <PropertyCard property={prop} />
+                {canManage(profile) && (
+                  <div className="absolute top-4 right-4 flex flex-col gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button size="sm" variant="outline" onClick={() => handleEdit(prop.id)}>
+                      Editar
+                    </Button>
+                    <Button size="sm" variant="destructive" onClick={() => handleDelete(prop.id)}>
+                      Eliminar
+                    </Button>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        ))}
+            ))}
       </div>
       {(!loading && properties.length === 0) && (
         <div className="text-center text-gray-500 mt-10">No hay propiedades disponibles.</div>

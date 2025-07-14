@@ -12,6 +12,7 @@ import {
   CarouselNext,
 } from "@/components/ui/carousel";
 import { UploadButton } from "@uploadthing/react";
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface Testimonial {
   id: string;
@@ -155,103 +156,129 @@ export default function TestimonialsDashboardPage() {
         </Button>
       </div>
       {/* Listado de testimonios */}
-      <Carousel className="mb-8 w-full max-w-5xl mx-auto" opts={{ slidesToScroll: 1 }}>
-        <CarouselContent>
-          {testimonialSlides.map((slide, idx) => (
-            <CarouselItem key={idx} className="flex justify-center">
-              {slide.map((t) => (
-                <div key={t.id} className="w-full max-w-2xl p-6 border rounded-lg bg-white flex flex-col gap-2 shadow-md">
-                  {editing?.id === t.id ? (
-                    <>
-                      <Input
-                        value={editing.name}
-                        onChange={e => setEditing({ ...editing, name: e.target.value })}
-                        className="mb-2"
-                      />
-                      <Input
-                        value={editing.role}
-                        onChange={e => setEditing({ ...editing, role: e.target.value })}
-                        className="mb-2"
-                      />
-                      <div className="mb-2">
-                        <label className="block font-medium mb-1">Imagen del cliente</label>
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gray-400 transition-colors">
-                          <UploadButton
-                            endpoint="inmuebleImage"
-                            onClientUploadComplete={(res) => {
-                              if (res && res[0]?.url) {
-                                setEditing((prev) => prev ? { ...prev, image: res[0].url } : prev);
-                                setImagePreview(res[0].url);
-                              }
-                            }}
-                            onUploadError={(error) => {
-                              alert("Error subiendo imagen: " + error.message);
-                            }}
-                            className="ut-button:bg-white ut-button:hover:bg-gray-50 ut-button:text-black ut-button:font-medium ut-button:px-4 ut-button:py-2 ut-button:rounded-md ut-button:transition-colors ut-button:border ut-button:border-gray-300 ut-button:hover:border-gray-400"
-                          />
-                          <p className="text-sm text-black mt-2">Haz clic para subir una imagen o arrastra y suelta</p>
-                        </div>
-                        <Input
-                          placeholder="URL de la imagen"
-                          value={editing?.image || ""}
-                          onChange={e => setEditing(editing ? { ...editing, image: e.target.value } : null)}
-                          className="mt-2"
-                        />
-                        {editing?.image && (
-                          <img src={editing.image} alt="preview" className="w-full max-h-40 object-cover rounded mt-2" />
-                        )}
-                      </div>
-                      <Textarea
-                        value={editing.testimonial}
-                        onChange={e => setEditing({ ...editing, testimonial: e.target.value })}
-                        className="mb-2"
-                      />
-                      <Input
-                        type="number"
-                        min={1}
-                        max={5}
-                        value={editing.rating}
-                        onChange={e => setEditing({ ...editing, rating: Number(e.target.value) })}
-                        className="mb-2"
-                      />
-                      <div className="flex gap-2">
-                        <Button onClick={handleEdit} disabled={loading}>Guardar</Button>
-                        <Button variant="outline" onClick={() => setEditing(null)} disabled={loading}>Cancelar</Button>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex items-center gap-4 mb-2">
-                        {t.image && <img src={t.image} alt={t.name} className="w-16 h-16 rounded-full object-cover border" />}
-                        <div>
-                          <div className="font-semibold text-lg">{t.name}</div>
-                          <div className="text-blue-600 text-sm">{t.role}</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center mb-2">
-                        {Array.from({ length: t.rating }).map((_, i) => (
-                          <span key={i} className="text-yellow-400 text-xl">★</span>
-                        ))}
-                        {Array.from({ length: 5 - t.rating }).map((_, i) => (
-                          <span key={i} className="text-gray-300 text-xl">★</span>
-                        ))}
-                      </div>
-                      <div className="italic text-gray-700 text-base mb-4 whitespace-pre-line line-clamp-6">"{t.testimonial}"</div>
-                      <div className="flex gap-2 mt-2">
-                        <Button size="sm" onClick={() => setEditing(t)} disabled={loading}>Editar</Button>
-                        <Button size="sm" variant="outline" onClick={() => handleDelete(t.id)} disabled={loading}>Eliminar</Button>
-                      </div>
-                    </>
-                  )}
+      {loading ? (
+        <div className="flex gap-4 mb-8">
+          {[...Array(2)].map((_, i) => (
+            <div key={i} className="w-full max-w-2xl p-6 border rounded-lg bg-white flex flex-col gap-2 shadow-md">
+              <div className="flex items-center gap-4 mb-2">
+                <Skeleton className="w-16 h-16 rounded-full" />
+                <div>
+                  <Skeleton className="h-6 w-32 mb-2" />
+                  <Skeleton className="h-4 w-24" />
                 </div>
-              ))}
-            </CarouselItem>
+              </div>
+              <div className="flex items-center mb-2 gap-2">
+                {[...Array(5)].map((_, i) => (
+                  <Skeleton key={i} className="h-6 w-6 rounded-full" />
+                ))}
+              </div>
+              <Skeleton className="h-4 w-full mb-4" />
+              <div className="flex gap-2 mt-2">
+                <Skeleton className="h-8 w-24" />
+                <Skeleton className="h-8 w-24" />
+              </div>
+            </div>
           ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
-      {testimonials.length === 0 && <div className="text-gray-500">No hay testimonios registrados.</div>}
+        </div>
+      ) : (
+        <Carousel className="mb-8 w-full max-w-5xl mx-auto" opts={{ slidesToScroll: 1 }}>
+          <CarouselContent>
+            {testimonialSlides.map((slide, idx) => (
+              <CarouselItem key={idx} className="flex justify-center">
+                {slide.map((t) => (
+                  <div key={t.id} className="w-full max-w-2xl p-6 border rounded-lg bg-white flex flex-col gap-2 shadow-md">
+                    {editing?.id === t.id ? (
+                      <>
+                        <Input
+                          value={editing.name}
+                          onChange={e => setEditing({ ...editing, name: e.target.value })}
+                          className="mb-2"
+                        />
+                        <Input
+                          value={editing.role}
+                          onChange={e => setEditing({ ...editing, role: e.target.value })}
+                          className="mb-2"
+                        />
+                        <div className="mb-2">
+                          <label className="block font-medium mb-1">Imagen del cliente</label>
+                          <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gray-400 transition-colors">
+                            <UploadButton
+                              endpoint="inmuebleImage"
+                              onClientUploadComplete={(res) => {
+                                if (res && res[0]?.url) {
+                                  setEditing((prev) => prev ? { ...prev, image: res[0].url } : prev);
+                                  setImagePreview(res[0].url);
+                                }
+                              }}
+                              onUploadError={(error) => {
+                                alert("Error subiendo imagen: " + error.message);
+                              }}
+                              className="ut-button:bg-white ut-button:hover:bg-gray-50 ut-button:text-black ut-button:font-medium ut-button:px-4 ut-button:py-2 ut-button:rounded-md ut-button:transition-colors ut-button:border ut-button:border-gray-300 ut-button:hover:border-gray-400"
+                            />
+                            <p className="text-sm text-black mt-2">Haz clic para subir una imagen o arrastra y suelta</p>
+                          </div>
+                          <Input
+                            placeholder="URL de la imagen"
+                            value={editing?.image || ""}
+                            onChange={e => setEditing(editing ? { ...editing, image: e.target.value } : null)}
+                            className="mt-2"
+                          />
+                          {editing?.image && (
+                            <img src={editing.image} alt="preview" className="w-full max-h-40 object-cover rounded mt-2" />
+                          )}
+                        </div>
+                        <Textarea
+                          value={editing.testimonial}
+                          onChange={e => setEditing({ ...editing, testimonial: e.target.value })}
+                          className="mb-2"
+                        />
+                        <Input
+                          type="number"
+                          min={1}
+                          max={5}
+                          value={editing.rating}
+                          onChange={e => setEditing({ ...editing, rating: Number(e.target.value) })}
+                          className="mb-2"
+                        />
+                        <div className="flex gap-2">
+                          <Button onClick={handleEdit} disabled={loading}>Guardar</Button>
+                          <Button variant="outline" onClick={() => setEditing(null)} disabled={loading}>Cancelar</Button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-4 mb-2">
+                          {t.image && <img src={t.image} alt={t.name} className="w-16 h-16 rounded-full object-cover border" />}
+                          <div>
+                            <div className="font-semibold text-lg">{t.name}</div>
+                            <div className="text-blue-600 text-sm">{t.role}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center mb-2">
+                          {Array.from({ length: t.rating }).map((_, i) => (
+                            <span key={i} className="text-yellow-400 text-xl">★</span>
+                          ))}
+                          {Array.from({ length: 5 - t.rating }).map((_, i) => (
+                            <span key={i} className="text-gray-300 text-xl">★</span>
+                          ))}
+                        </div>
+                        <div className="italic text-gray-700 text-base mb-4 whitespace-pre-line line-clamp-6">"{t.testimonial}"</div>
+                        <div className="flex gap-2 mt-2">
+                          <Button size="sm" onClick={() => setEditing(t)} disabled={loading}>Editar</Button>
+                          <Button size="sm" variant="outline" onClick={() => handleDelete(t.id)} disabled={loading}>Eliminar</Button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+      )}
+      {(!loading && testimonials.length === 0) && <div className="text-gray-500">No hay testimonios registrados.</div>}
     </div>
   );
 } 

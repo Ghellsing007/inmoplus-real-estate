@@ -11,6 +11,7 @@ import { Heart, MapPin, Bed, Bath, Square, Eye } from "lucide-react"
 import { useFavorites } from "@/hooks/useFavorites"
 import { useAuth } from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface PropertyCardProps {
   property: {
@@ -161,5 +162,43 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         </div>
       </div>
     </Link>
+  )
+}
+
+export function PropertyCardSkeleton() {
+  return (
+    <div className="bg-white rounded-2xl shadow-md overflow-hidden animate-pulse">
+      {/* Imagen y badges */}
+      <div className="relative aspect-[16/10] w-full bg-gray-100">
+        <Skeleton className="absolute inset-0 w-full h-full" />
+        <div className="absolute top-4 left-4 flex gap-2">
+          <Skeleton className="w-20 h-6 rounded-full" />
+          <Skeleton className="w-20 h-6 rounded-full" />
+        </div>
+        <Skeleton className="absolute top-4 right-4 w-10 h-10 rounded-full" />
+      </div>
+      {/* Contenido */}
+      <div className="p-6">
+        <div className="mb-3">
+          <Skeleton className="h-6 w-3/4 mb-2 rounded" />
+          <div className="flex items-center mb-2">
+            <Skeleton className="h-4 w-4 mr-1 rounded" />
+            <Skeleton className="h-4 w-24 rounded" />
+          </div>
+        </div>
+        <div className="flex items-center justify-between mb-4">
+          <Skeleton className="h-4 w-8 rounded" />
+          <Skeleton className="h-4 w-8 rounded" />
+          <Skeleton className="h-4 w-12 rounded" />
+        </div>
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <Skeleton className="h-6 w-20 mb-1 rounded" />
+            <Skeleton className="h-4 w-12 rounded" />
+          </div>
+          <Skeleton className="h-10 w-24 rounded" />
+        </div>
+      </div>
+    </div>
   )
 }

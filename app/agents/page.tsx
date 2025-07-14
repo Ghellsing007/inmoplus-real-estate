@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Navbar from "@/components/Navbar"
-import AgentCard from "@/components/AgentCard"
+import AgentCard, { AgentCardSkeleton } from "@/components/AgentCard"
 import Footer from "@/components/Footer"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -77,12 +77,34 @@ export default function AgentsPage() {
     return (
       <div className="min-h-screen bg-slate-50">
         <Navbar />
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Cargando agentes...</p>
+        <section className="py-16 bg-slate-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Conoce a Nuestros Agentes</h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Cargando agentes...
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(6)].map((_, i) => (
+                <AgentCardSkeleton key={i} />
+              ))}
+            </div>
           </div>
+        </section>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (!loading && agents.length === 0) {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center text-gray-500 text-xl">No hay agentes registrados.</div>
         </div>
+        <Footer />
       </div>
     )
   }

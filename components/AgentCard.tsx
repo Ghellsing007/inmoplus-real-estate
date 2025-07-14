@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Phone, Mail, MessageCircle, Star, MapPin, Award } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface Agent {
   id: string
@@ -129,5 +130,45 @@ export default function AgentCard({ agent }: AgentCardProps) {
         </div>
       </CardContent>
     </Card>
+  )
+}
+
+export function AgentCardSkeleton() {
+  return (
+    <div className="bg-white shadow-md overflow-hidden rounded-xl animate-pulse">
+      {/* Header con imagen y nombre */}
+      <div className="relative h-48 bg-gradient-to-br from-blue-500 to-blue-600">
+        <Skeleton className="absolute bottom-4 left-4 w-20 h-20 rounded-full border-4 border-white" />
+        <div className="absolute bottom-4 left-28 right-4 flex items-end">
+          <div className="ml-4 flex-1">
+            <Skeleton className="h-6 w-32 mb-2" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+        </div>
+      </div>
+      {/* Contenido */}
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-6 w-20 rounded-full" />
+        </div>
+        <Skeleton className="h-4 w-full mb-4" />
+        <Skeleton className="h-4 w-1/2 mb-4" />
+        <Skeleton className="h-8 w-full mb-4" />
+        <Skeleton className="h-4 w-1/3 mb-4" />
+        <div className="flex gap-2 mb-4">
+          {[...Array(3)].map((_, i) => (
+            <Skeleton key={i} className="h-6 w-16 rounded-full" />
+          ))}
+        </div>
+        <div className="space-y-2">
+          <Skeleton className="h-10 w-full" />
+          <div className="grid grid-cols-2 gap-2">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }

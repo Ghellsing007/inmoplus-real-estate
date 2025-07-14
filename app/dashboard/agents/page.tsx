@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase";
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface Agent {
   id: string;
@@ -115,9 +116,34 @@ export default function AgentsDashboardPage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8">Cargando agentes...</div>
+            <div className="overflow-x-auto mb-8">
+              <table className="min-w-full border text-sm">
+                <thead>
+                  <tr className="bg-slate-100">
+                    <th className="p-2 border">Nombre</th>
+                    <th className="p-2 border">Email</th>
+                    <th className="p-2 border">Teléfono</th>
+                    <th className="p-2 border">Especialización</th>
+                    <th className="p-2 border">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...Array(4)].map((_, i) => (
+                    <tr key={i} className="border-b">
+                      <td className="p-2 border"><Skeleton className="h-4 w-24" /></td>
+                      <td className="p-2 border"><Skeleton className="h-4 w-32" /></td>
+                      <td className="p-2 border"><Skeleton className="h-4 w-20" /></td>
+                      <td className="p-2 border"><Skeleton className="h-4 w-24" /></td>
+                      <td className="p-2 border flex gap-2"><Skeleton className="h-8 w-16" /><Skeleton className="h-8 w-16" /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ) : error ? (
             <div className="text-red-600 text-center py-8">{error}</div>
+          ) : agents.length === 0 ? (
+            <div className="text-center text-gray-500 py-8">No hay agentes registrados.</div>
           ) : (
             <div className="overflow-x-auto mb-8">
               <table className="min-w-full border text-sm">

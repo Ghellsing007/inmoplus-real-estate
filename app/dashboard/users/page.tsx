@@ -12,6 +12,7 @@ import {
   SelectContent,
   SelectItem
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton"
 
 const ROLES = ["admin", "agent", "client"] as const;
 
@@ -69,9 +70,32 @@ export default function UsersPage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="text-center py-8">Cargando usuarios...</div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full border text-sm">
+                <thead>
+                  <tr className="bg-slate-100">
+                    <th className="p-2 border">Nombre</th>
+                    <th className="p-2 border">Email</th>
+                    <th className="p-2 border">Rol</th>
+                    <th className="p-2 border">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...Array(4)].map((_, i) => (
+                    <tr key={i} className="border-b">
+                      <td className="p-2 border"><Skeleton className="h-4 w-24" /></td>
+                      <td className="p-2 border"><Skeleton className="h-4 w-32" /></td>
+                      <td className="p-2 border"><Skeleton className="h-4 w-16" /></td>
+                      <td className="p-2 border flex gap-2"><Skeleton className="h-8 w-20" /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ) : error ? (
             <div className="text-red-600 text-center py-8">{error}</div>
+          ) : users.length === 0 ? (
+            <div className="text-center text-gray-500 py-8">No hay usuarios registrados.</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full border text-sm">

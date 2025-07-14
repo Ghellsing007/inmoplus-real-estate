@@ -7,8 +7,29 @@ import { Button } from "@/components/ui/button";
 import { generateReactHelpers } from "@uploadthing/react";
 import type { OurFileRouter } from "@/app/api/uploadthing/route";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const { useUploadThing } = generateReactHelpers<OurFileRouter>();
+
+function FormSkeleton() {
+  return (
+    <div className="max-w-xl mx-auto py-10">
+      <Skeleton className="h-8 w-1/2 mb-6" />
+      <div className="space-y-4">
+        {[...Array(7)].map((_, i) => (
+          <Skeleton key={i} className="h-10 w-full" />
+        ))}
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-20 w-full" />
+        <div className="flex gap-4 mt-4">
+          <Skeleton className="h-10 w-32" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default function EditPropertyPage() {
   const router = useRouter();
@@ -132,7 +153,7 @@ export default function EditPropertyPage() {
     else router.push("/dashboard/properties");
   };
 
-  if (loading) return <div className="p-8">Cargando propiedad...</div>;
+  if (loading) return <FormSkeleton />
   if (error) return <div className="p-8 text-red-500">{error}</div>;
   if (!property) return <div className="p-8">Propiedad no encontrada.</div>;
 
